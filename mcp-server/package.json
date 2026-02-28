@@ -1,0 +1,24 @@
+{
+  "name": "commune-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Commune email & SMS — use in Claude Desktop, Cursor, VS Code",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "commune-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "commune-ai": "latest"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0"
+  }
+}

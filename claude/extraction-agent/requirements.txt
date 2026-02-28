@@ -1,0 +1,4 @@
+anthropic
+commune-mail
+flask
+requests
