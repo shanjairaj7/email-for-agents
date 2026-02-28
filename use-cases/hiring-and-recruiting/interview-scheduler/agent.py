@@ -22,8 +22,18 @@ import json
 import os
 import time
 
+from dotenv import load_dotenv
 from commune import CommuneClient
 from openai import OpenAI
+
+load_dotenv()
+
+# Validate required environment variables at startup
+_REQUIRED_ENV = ["COMMUNE_API_KEY", "OPENAI_API_KEY"]
+for _var in _REQUIRED_ENV:
+    if not os.getenv(_var):
+        raise SystemExit(f"Missing required environment variable: {_var}\n"
+                         f"Copy .env.example to .env and fill in your values.")
 
 # ── Clients ────────────────────────────────────────────────────────────────────
 
@@ -228,63 +238,75 @@ def main() -> None:
 
     handled_outbound: set[str] = set()
 
-    while True:
-        result = commune.threads.list(inbox_id=inbox_id, limit=20)
+    try:
+        while True:
+            result = commune.threads.list(inbox_id=inbox_id, limit=20)
 
-        for thread in result.data:
-            tid = thread.thread_id
+            for thread in result.data:
+                tid = thread.thread_id
 
-            # Skip threads where the last message was our own outbound reply
-            # unless the candidate has replied again (inbound)
-            if thread.last_direction == "outbound" and tid not in thread_state:
-                handled_outbound.add(tid)
-                continue
-
-            if thread.last_direction != "inbound":
-                continue  # waiting for candidate — nothing to do
-
-            # Load the full thread
-            messages = commune.threads.messages(tid)
-            last_inbound = next(
-                (m for m in reversed(messages) if m.direction == "inbound"),
-                None,
-            )
-            if not last_inbound:
-                continue
-
-            content = last_inbound.content or ""
-            sender = next(
-                (p.identity for p in last_inbound.participants if p.role == "sender"),
-                "there",
-            )
-            # Guess candidate name from email address (first part before @)
-            candidate_name = sender.split("@")[0].replace(".", " ").title()
-
-            subject = thread.subject or "Interview"
-
-            # ── New thread: classify intent ──────────────────────────────────
-
-            if tid not in thread_state:
-                classification = classify_email(subject, content)
-                intent = classification.get("intent", "other")
-
-                if intent != "schedule_request":
+                # Skip threads where the last message was our own outbound reply
+                # unless the candidate has replied again (inbound)
+                if thread.last_direction == "outbound" and tid not in thread_state:
                     handled_outbound.add(tid)
                     continue
 
-                preferred = classification.get("preferred_times", "")
-                role = subject  # use email subject as the role label for simplicity
+                if thread.last_direction != "inbound":
+                    continue  # waiting for candidate — nothing to do
 
-                slots = select_slots_to_propose(preferred, n=3)
-                if not slots:
-                    # No open slots — apologise and ask them to check back
-                    body = (
-                        f"Hi {candidate_name},\n\n"
-                        f"Thank you for reaching out. Unfortunately we don't have any "
-                        f"open interview slots right now. We'll follow up as soon as "
-                        f"availability opens up.\n\n"
-                        f"Best,\n{INTERVIEWER_NAME}"
-                    )
+                # Load the full thread
+                messages = commune.threads.messages(tid)
+                last_inbound = next(
+                    (m for m in reversed(messages) if m.direction == "inbound"),
+                    None,
+                )
+                if not last_inbound:
+                    continue
+
+                content = last_inbound.content or ""
+                sender = next(
+                    (p.identity for p in last_inbound.participants if p.role == "sender"),
+                    "there",
+                )
+                # Guess candidate name from email address (first part before @)
+                candidate_name = sender.split("@")[0].replace(".", " ").title()
+
+                subject = thread.subject or "Interview"
+
+                # ── New thread: classify intent ──────────────────────────────────
+
+                if tid not in thread_state:
+                    classification = classify_email(subject, content)
+                    intent = classification.get("intent", "other")
+
+                    if intent != "schedule_request":
+                        handled_outbound.add(tid)
+                        continue
+
+                    preferred = classification.get("preferred_times", "")
+                    role = subject  # use email subject as the role label for simplicity
+
+                    slots = select_slots_to_propose(preferred, n=3)
+                    if not slots:
+                        # No open slots — apologise and ask them to check back
+                        body = (
+                            f"Hi {candidate_name},\n\n"
+                            f"Thank you for reaching out. Unfortunately we don't have any "
+                            f"open interview slots right now. We'll follow up as soon as "
+                            f"availability opens up.\n\n"
+                            f"Best,\n{INTERVIEWER_NAME}"
+                        )
+                        commune.messages.send(
+                            to=sender,
+                            subject=f"Re: {subject}",
+                            text=body,
+                            inbox_id=inbox_id,
+                            thread_id=tid,
+                        )
+                        handled_outbound.add(tid)
+                        continue
+
+                    body = write_slot_proposal(candidate_name, slots, role)
                     commune.messages.send(
                         to=sender,
                         subject=f"Re: {subject}",
@@ -292,38 +314,68 @@ def main() -> None:
                         inbox_id=inbox_id,
                         thread_id=tid,
                     )
-                    handled_outbound.add(tid)
-                    continue
 
-                body = write_slot_proposal(candidate_name, slots, role)
-                commune.messages.send(
-                    to=sender,
-                    subject=f"Re: {subject}",
-                    text=body,
-                    inbox_id=inbox_id,
-                    thread_id=tid,
-                )
+                    thread_state[tid] = {
+                        "stage": "proposed",
+                        "proposed_slots": slots,
+                        "candidate_name": candidate_name,
+                        "candidate_email": sender,
+                        "role": role,
+                    }
+                    print(f"  Slots proposed -> {candidate_name} ({sender})")
 
-                thread_state[tid] = {
-                    "stage": "proposed",
-                    "proposed_slots": slots,
-                    "candidate_name": candidate_name,
-                    "candidate_email": sender,
-                    "role": role,
-                }
-                print(f"  Slots proposed -> {candidate_name} ({sender})")
+                # ── Existing thread: waiting for slot confirmation ─────────────────
 
-            # ── Existing thread: waiting for slot confirmation ─────────────────
+                elif thread_state[tid]["stage"] == "proposed":
+                    state = thread_state[tid]
+                    classification = classify_email(subject, content)
+                    intent = classification.get("intent", "other")
 
-            elif thread_state[tid]["stage"] == "proposed":
-                state = thread_state[tid]
-                classification = classify_email(subject, content)
-                intent = classification.get("intent", "other")
+                    if intent != "slot_confirmation":
+                        # Not a clear confirmation — resend slots
+                        slots = state["proposed_slots"]
+                        body = write_slot_proposal(state["candidate_name"], slots, state["role"])
+                        commune.messages.send(
+                            to=state["candidate_email"],
+                            subject=f"Re: {subject}",
+                            text=body,
+                            inbox_id=inbox_id,
+                            thread_id=tid,
+                        )
+                        print(f"  Re-sent slots -> {state['candidate_name']}")
+                        continue
 
-                if intent != "slot_confirmation":
-                    # Not a clear confirmation — resend slots
-                    slots = state["proposed_slots"]
-                    body = write_slot_proposal(state["candidate_name"], slots, state["role"])
+                    confirmed_text = classification.get("confirmed_slot", content)
+                    slot = match_confirmed_slot(confirmed_text)
+
+                    if not slot:
+                        # Couldn't match a slot — ask for clarification
+                        slot_labels = "\n".join(
+                            f"{i+1}. {s['label']}" for i, s in enumerate(state["proposed_slots"])
+                        )
+                        clarification = (
+                            f"Hi {state['candidate_name']},\n\n"
+                            f"Thanks for your reply! Could you confirm which slot works best by "
+                            f"replying with the number?\n\n{slot_labels}\n\n"
+                            f"Best,\n{INTERVIEWER_NAME}"
+                        )
+                        commune.messages.send(
+                            to=state["candidate_email"],
+                            subject=f"Re: {subject}",
+                            text=clarification,
+                            inbox_id=inbox_id,
+                            thread_id=tid,
+                        )
+                        print(f"  Asked for clarification -> {state['candidate_name']}")
+                        continue
+
+                    # Mark slot as booked
+                    for s in AVAILABLE_SLOTS:
+                        if s["id"] == slot["id"]:
+                            s["booked"] = True
+                            break
+
+                    body = write_confirmation(state["candidate_name"], slot, state["role"])
                     commune.messages.send(
                         to=state["candidate_email"],
                         subject=f"Re: {subject}",
@@ -331,52 +383,13 @@ def main() -> None:
                         inbox_id=inbox_id,
                         thread_id=tid,
                     )
-                    print(f"  Re-sent slots -> {state['candidate_name']}")
-                    continue
 
-                confirmed_text = classification.get("confirmed_slot", content)
-                slot = match_confirmed_slot(confirmed_text)
+                    thread_state[tid]["stage"] = "confirmed"
+                    print(f"  Interview confirmed -> {state['candidate_name']} | {slot['label']}")
 
-                if not slot:
-                    # Couldn't match a slot — ask for clarification
-                    slot_labels = "\n".join(
-                        f"{i+1}. {s['label']}" for i, s in enumerate(state["proposed_slots"])
-                    )
-                    clarification = (
-                        f"Hi {state['candidate_name']},\n\n"
-                        f"Thanks for your reply! Could you confirm which slot works best by "
-                        f"replying with the number?\n\n{slot_labels}\n\n"
-                        f"Best,\n{INTERVIEWER_NAME}"
-                    )
-                    commune.messages.send(
-                        to=state["candidate_email"],
-                        subject=f"Re: {subject}",
-                        text=clarification,
-                        inbox_id=inbox_id,
-                        thread_id=tid,
-                    )
-                    print(f"  Asked for clarification -> {state['candidate_name']}")
-                    continue
-
-                # Mark slot as booked
-                for s in AVAILABLE_SLOTS:
-                    if s["id"] == slot["id"]:
-                        s["booked"] = True
-                        break
-
-                body = write_confirmation(state["candidate_name"], slot, state["role"])
-                commune.messages.send(
-                    to=state["candidate_email"],
-                    subject=f"Re: {subject}",
-                    text=body,
-                    inbox_id=inbox_id,
-                    thread_id=tid,
-                )
-
-                thread_state[tid]["stage"] = "confirmed"
-                print(f"  Interview confirmed -> {state['candidate_name']} | {slot['label']}")
-
-        time.sleep(30)
+            time.sleep(30)
+    except KeyboardInterrupt:
+        print("\nShutting down gracefully...")
 
 
 if __name__ == "__main__":

@@ -10,9 +10,23 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+from dotenv import load_dotenv
 from commune import CommuneClient
 from flask import Flask, jsonify, request
 from openai import OpenAI
+
+load_dotenv()
+
+# Validate required environment variables at startup
+_REQUIRED_ENV = [
+    "COMMUNE_API_KEY", "OPENAI_API_KEY", "COMMUNE_INBOX_ID",
+    "COMMUNE_PHONE_NUMBER_ID", "ONCALL_EMAIL", "ONCALL_PHONE",
+    "SECONDARY_EMAIL", "SECONDARY_PHONE", "MANAGER_EMAIL",
+]
+for _var in _REQUIRED_ENV:
+    if not os.getenv(_var):
+        raise SystemExit(f"Missing required environment variable: {_var}\n"
+                         f"Copy .env.example to .env and fill in your values.")
 
 app = Flask(__name__)
 

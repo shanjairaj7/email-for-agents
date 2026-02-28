@@ -18,8 +18,18 @@ import os
 import glob
 import time
 from pathlib import Path
+from dotenv import load_dotenv
 from openai import OpenAI
 from commune import CommuneClient
+
+load_dotenv()
+
+# Validate required environment variables at startup
+_REQUIRED_ENV = ["COMMUNE_API_KEY", "OPENAI_API_KEY"]
+for _var in _REQUIRED_ENV:
+    if not os.getenv(_var):
+        raise SystemExit(f"Missing required environment variable: {_var}\n"
+                         f"Copy .env.example to .env and fill in your values.")
 
 # ── Clients ────────────────────────────────────────────────────────────────────
 
@@ -293,60 +303,63 @@ def main() -> None:
     handled_emails: set[str] = set()
     handled_sms:    set[str] = set()
 
-    while True:
-        try:
-            # Load KB once per cycle (cheap — files are local)
-            kb_context = load_knowledge_base()
+    try:
+        while True:
+            try:
+                # Load KB once per cycle (cheap — files are local)
+                kb_context = load_knowledge_base()
 
-            # ── Email ──────────────────────────────────────────────────────────
+                # ── Email ──────────────────────────────────────────────────────────
 
-            email_result = commune.threads.list(inbox_id=inbox_id, limit=10)
-            new_email_threads = [
-                t for t in email_result.data
-                if is_new_inbound_email(t, handled_emails)
-            ]
-
-            if new_email_threads:
-                log(CYAN, "POLL", f"Email: {len(new_email_threads)} new thread(s)")
-                for thread in new_email_threads:
-                    try:
-                        handle_email_thread(thread, inbox_id, kb_context)
-                        handled_emails.add(thread.thread_id)
-                    except Exception as e:
-                        log(RED, "ERROR", f"Email thread {thread.thread_id}: {e}")
-
-            # ── SMS ────────────────────────────────────────────────────────────
-
-            if phone_id:
-                sms_convos = commune.sms.conversations(phone_number_id=phone_id)
-                new_sms_convos = [
-                    c for c in sms_convos
-                    if is_new_inbound_sms(c, handled_sms)
+                email_result = commune.threads.list(inbox_id=inbox_id, limit=10)
+                new_email_threads = [
+                    t for t in email_result.data
+                    if is_new_inbound_email(t, handled_emails)
                 ]
 
-                if new_sms_convos:
-                    log(BLUE, "POLL", f"SMS: {len(new_sms_convos)} new conversation(s)")
-                    for convo in new_sms_convos:
-                        remote = (
-                            getattr(convo, "remote_number", None)
-                            or getattr(convo, "from_number", None)
-                        )
+                if new_email_threads:
+                    log(CYAN, "POLL", f"Email: {len(new_email_threads)} new thread(s)")
+                    for thread in new_email_threads:
                         try:
-                            handle_sms_conversation(convo, phone_id, kb_context)
-                            if remote:
-                                handled_sms.add(remote)
+                            handle_email_thread(thread, inbox_id, kb_context)
+                            handled_emails.add(thread.thread_id)
                         except Exception as e:
-                            log(RED, "ERROR", f"SMS convo {remote}: {e}")
+                            log(RED, "ERROR", f"Email thread {thread.thread_id}: {e}")
 
-            # ── Quiet cycle ────────────────────────────────────────────────────
+                # ── SMS ────────────────────────────────────────────────────────────
 
-            if not new_email_threads and (not phone_id or not new_sms_convos):
-                log(DIM, "POLL", "No new messages — waiting 30s...")
+                if phone_id:
+                    sms_convos = commune.sms.conversations(phone_number_id=phone_id)
+                    new_sms_convos = [
+                        c for c in sms_convos
+                        if is_new_inbound_sms(c, handled_sms)
+                    ]
 
-        except Exception as e:
-            log(RED, "ERROR", f"Poll loop error: {e}")
+                    if new_sms_convos:
+                        log(BLUE, "POLL", f"SMS: {len(new_sms_convos)} new conversation(s)")
+                        for convo in new_sms_convos:
+                            remote = (
+                                getattr(convo, "remote_number", None)
+                                or getattr(convo, "from_number", None)
+                            )
+                            try:
+                                handle_sms_conversation(convo, phone_id, kb_context)
+                                if remote:
+                                    handled_sms.add(remote)
+                            except Exception as e:
+                                log(RED, "ERROR", f"SMS convo {remote}: {e}")
 
-        time.sleep(30)
+                # ── Quiet cycle ────────────────────────────────────────────────────
+
+                if not new_email_threads and (not phone_id or not new_sms_convos):
+                    log(DIM, "POLL", "No new messages — waiting 30s...")
+
+            except Exception as e:
+                log(RED, "ERROR", f"Poll loop error: {e}")
+
+            time.sleep(30)
+    except KeyboardInterrupt:
+        print("\nShutting down gracefully...")
 
 if __name__ == "__main__":
     main()

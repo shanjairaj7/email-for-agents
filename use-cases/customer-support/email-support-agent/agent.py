@@ -18,8 +18,18 @@ import os
 import glob
 import time
 from pathlib import Path
+from dotenv import load_dotenv
 from openai import OpenAI
 from commune import CommuneClient
+
+load_dotenv()
+
+# Validate required environment variables at startup
+_REQUIRED_ENV = ["COMMUNE_API_KEY", "OPENAI_API_KEY"]
+for _var in _REQUIRED_ENV:
+    if not os.getenv(_var):
+        raise SystemExit(f"Missing required environment variable: {_var}\n"
+                         f"Copy .env.example to .env and fill in your values.")
 
 # ── Clients ────────────────────────────────────────────────────────────────────
 
@@ -242,31 +252,34 @@ def main() -> None:
     # For persistence across restarts, replace this with a database or file.
     handled: set[str] = set()
 
-    while True:
-        try:
-            result = commune.threads.list(inbox_id=inbox_id, limit=20)
+    try:
+        while True:
+            try:
+                result = commune.threads.list(inbox_id=inbox_id, limit=20)
 
-            # Only process threads where the customer sent the last message
-            inbound_threads = [
-                t for t in result.data
-                if t.last_direction == "inbound" and t.thread_id not in handled
-            ]
+                # Only process threads where the customer sent the last message
+                inbound_threads = [
+                    t for t in result.data
+                    if t.last_direction == "inbound" and t.thread_id not in handled
+                ]
 
-            if inbound_threads:
-                log(CYAN, "POLL", f"Found {len(inbound_threads)} new thread(s) to handle")
-                for thread in inbound_threads:
-                    try:
-                        handle_thread(thread, inbox_id)
-                        handled.add(thread.thread_id)
-                    except Exception as e:
-                        log(RED, "ERROR", f"Failed to handle thread {thread.thread_id}: {e}")
-            else:
-                log(DIM, "POLL", "No new inbound threads — waiting...")
+                if inbound_threads:
+                    log(CYAN, "POLL", f"Found {len(inbound_threads)} new thread(s) to handle")
+                    for thread in inbound_threads:
+                        try:
+                            handle_thread(thread, inbox_id)
+                            handled.add(thread.thread_id)
+                        except Exception as e:
+                            log(RED, "ERROR", f"Failed to handle thread {thread.thread_id}: {e}")
+                else:
+                    log(DIM, "POLL", "No new inbound threads — waiting...")
 
-        except Exception as e:
-            log(RED, "ERROR", f"Poll error: {e}")
+            except Exception as e:
+                log(RED, "ERROR", f"Poll error: {e}")
 
-        time.sleep(30)
+            time.sleep(30)
+    except KeyboardInterrupt:
+        print("\nShutting down gracefully...")
 
 if __name__ == "__main__":
     main()

@@ -4,6 +4,7 @@
 [![LangChain](https://img.shields.io/badge/LangChain-compatible-green)](langchain/)
 [![CrewAI](https://img.shields.io/badge/CrewAI-compatible-orange)](crewai/)
 [![MCP](https://img.shields.io/badge/MCP-server-purple)](mcp-server/)
+[![CI](https://github.com/shanjairaj7/email-for-agents/actions/workflows/ci.yml/badge.svg)](https://github.com/shanjairaj7/email-for-agents/actions/workflows/ci.yml)
 
 # Email & SMS for AI Agents
 

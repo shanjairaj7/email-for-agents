@@ -13,8 +13,18 @@ Usage:
     python agent.py
 """
 import os, json, time
+from dotenv import load_dotenv
 import anthropic
 from commune import CommuneClient
+
+load_dotenv()
+
+# Validate required environment variables at startup
+_REQUIRED_ENV = ["COMMUNE_API_KEY", "ANTHROPIC_API_KEY"]
+for _var in _REQUIRED_ENV:
+    if not os.getenv(_var):
+        raise SystemExit(f"Missing required environment variable: {_var}\n"
+                         f"Copy .env.example to .env and fill in your values.")
 
 commune_client = CommuneClient(api_key=os.environ["COMMUNE_API_KEY"])
 anthropic_client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
@@ -167,17 +177,20 @@ def main():
     print("Send an email to your inbox address to test.\n")
 
     handled = set()
-    while True:
-        result = commune_client.threads.list(inbox_id=INBOX_ID, limit=10)
-        unanswered = [t for t in result.data if t.last_direction == "inbound" and t.thread_id not in handled]
+    try:
+        while True:
+            result = commune_client.threads.list(inbox_id=INBOX_ID, limit=10)
+            unanswered = [t for t in result.data if t.last_direction == "inbound" and t.thread_id not in handled]
 
-        if unanswered:
-            print(f"\n{len(unanswered)} email(s) waiting...")
-            run_agent("Check the inbox and reply to all unanswered emails. Handle each one completely.")
-            for t in unanswered:
-                handled.add(t.thread_id)
+            if unanswered:
+                print(f"\n{len(unanswered)} email(s) waiting...")
+                run_agent("Check the inbox and reply to all unanswered emails. Handle each one completely.")
+                for t in unanswered:
+                    handled.add(t.thread_id)
 
-        time.sleep(30)
+            time.sleep(30)
+    except KeyboardInterrupt:
+        print("\nShutting down gracefully...")
 
 if __name__ == "__main__":
     main()

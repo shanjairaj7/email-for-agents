@@ -25,8 +25,18 @@ import json
 import os
 import time
 
+from dotenv import load_dotenv
 from commune import CommuneClient
 from openai import OpenAI
+
+load_dotenv()
+
+# Validate required environment variables at startup
+_REQUIRED_ENV = ["COMMUNE_API_KEY", "OPENAI_API_KEY"]
+for _var in _REQUIRED_ENV:
+    if not os.getenv(_var):
+        raise SystemExit(f"Missing required environment variable: {_var}\n"
+                         f"Copy .env.example to .env and fill in your values.")
 
 # ── Clients ────────────────────────────────────────────────────────────────────
 
@@ -263,10 +273,13 @@ def main() -> None:
 
     # Poll for replies
     print("\nPolling for replies every 60 seconds. Press Ctrl+C to stop.\n")
-    while True:
-        print("Checking for replies...")
-        handle_replies(inbox_id)
-        time.sleep(60)
+    try:
+        while True:
+            print("Checking for replies...")
+            handle_replies(inbox_id)
+            time.sleep(60)
+    except KeyboardInterrupt:
+        print("\nShutting down gracefully...")
 
 
 if __name__ == "__main__":

@@ -9,8 +9,18 @@ Usage:
 
 import os
 
+from dotenv import load_dotenv
 from commune import CommuneClient
 from openai import OpenAI
+
+load_dotenv()
+
+# Validate required environment variables at startup
+_REQUIRED_ENV = ["COMMUNE_API_KEY", "OPENAI_API_KEY", "COMMUNE_PHONE_NUMBER_ID"]
+for _var in _REQUIRED_ENV:
+    if not os.getenv(_var):
+        raise SystemExit(f"Missing required environment variable: {_var}\n"
+                         f"Copy .env.example to .env and fill in your values.")
 
 commune = CommuneClient(api_key=os.environ["COMMUNE_API_KEY"])
 openai_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])

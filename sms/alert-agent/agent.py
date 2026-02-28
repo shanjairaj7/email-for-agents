@@ -11,8 +11,18 @@ Usage:
     python agent.py
 """
 import os, json, time
+from dotenv import load_dotenv
 from commune import CommuneClient
 from openai import OpenAI
+
+load_dotenv()
+
+# Validate required environment variables at startup
+_REQUIRED_ENV = ["COMMUNE_API_KEY", "OPENAI_API_KEY", "ALERT_PHONE"]
+for _var in _REQUIRED_ENV:
+    if not os.getenv(_var):
+        raise SystemExit(f"Missing required environment variable: {_var}\n"
+                         f"Copy .env.example to .env and fill in your values.")
 
 commune = CommuneClient(api_key=os.environ["COMMUNE_API_KEY"])
 openai_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
@@ -82,44 +92,47 @@ def main():
     print(f"Alert agent monitoring: {INBOX_ADDRESS}")
     print(f"SMS alerts -> {ALERT_PHONE}\n")
 
-    while True:
-        result = commune.threads.list(inbox_id=INBOX_ID, limit=10)
+    try:
+        while True:
+            result = commune.threads.list(inbox_id=INBOX_ID, limit=10)
 
-        for thread in result.data:
-            # Skip threads we've already processed or that were outbound
-            if thread.thread_id in handled or thread.last_direction != "inbound":
+            for thread in result.data:
+                # Skip threads we've already processed or that were outbound
+                if thread.thread_id in handled or thread.last_direction != "inbound":
+                    handled.add(thread.thread_id)
+                    continue
+
+                # Load the full message list and find the last inbound message
+                messages = commune.threads.messages(thread.thread_id)
+                last = next(
+                    (m for m in reversed(messages) if m.direction == "inbound"),
+                    None,
+                )
+                if not last:
+                    continue
+
+                sender = next(
+                    (p.identity for p in last.participants if p.role == "sender"),
+                    "unknown",
+                )
+                print(f"\nEmail from {sender}: {thread.subject}")
+
+                # Classify urgency with LLM
+                classification = classify_urgency(
+                    thread.subject or "",
+                    last.content or "",
+                )
+                print(f"  Urgency: {classification['urgency']} — {classification['reason']}")
+
+                # Only alert on high-urgency emails
+                if classification["urgency"] == "high":
+                    send_sms_alert(classification, sender, thread.subject or "(no subject)")
+
                 handled.add(thread.thread_id)
-                continue
 
-            # Load the full message list and find the last inbound message
-            messages = commune.threads.messages(thread.thread_id)
-            last = next(
-                (m for m in reversed(messages) if m.direction == "inbound"),
-                None,
-            )
-            if not last:
-                continue
-
-            sender = next(
-                (p.identity for p in last.participants if p.role == "sender"),
-                "unknown",
-            )
-            print(f"\nEmail from {sender}: {thread.subject}")
-
-            # Classify urgency with LLM
-            classification = classify_urgency(
-                thread.subject or "",
-                last.content or "",
-            )
-            print(f"  Urgency: {classification['urgency']} — {classification['reason']}")
-
-            # Only alert on high-urgency emails
-            if classification["urgency"] == "high":
-                send_sms_alert(classification, sender, thread.subject or "(no subject)")
-
-            handled.add(thread.thread_id)
-
-        time.sleep(30)
+            time.sleep(30)
+    except KeyboardInterrupt:
+        print("\nShutting down gracefully...")
 
 if __name__ == "__main__":
     main()

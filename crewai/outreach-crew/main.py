@@ -16,6 +16,16 @@ import json
 import os
 import time
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Validate required environment variables at startup
+_REQUIRED_ENV = ["COMMUNE_API_KEY", "OPENAI_API_KEY"]
+for _var in _REQUIRED_ENV:
+    if not os.getenv(_var):
+        raise SystemExit(f"Missing required environment variable: {_var}\n"
+                         f"Copy .env.example to .env and fill in your values.")
 
 from crew import INBOX_ADDRESS, create_outreach_crew
 

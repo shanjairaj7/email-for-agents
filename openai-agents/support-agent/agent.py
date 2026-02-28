@@ -13,8 +13,18 @@ Usage:
     python agent.py
 """
 import os, json, time
+from dotenv import load_dotenv
 from agents import Agent, Runner, function_tool
 from commune import CommuneClient
+
+load_dotenv()
+
+# Validate required environment variables at startup
+_REQUIRED_ENV = ["COMMUNE_API_KEY", "OPENAI_API_KEY"]
+for _var in _REQUIRED_ENV:
+    if not os.getenv(_var):
+        raise SystemExit(f"Missing required environment variable: {_var}\n"
+                         f"Copy .env.example to .env and fill in your values.")
 
 commune = CommuneClient(api_key=os.environ["COMMUNE_API_KEY"])
 
@@ -88,21 +98,24 @@ def main():
     print("Send an email to your inbox address to test.\n")
 
     handled = set()
-    while True:
-        result = commune.threads.list(inbox_id=INBOX_ID, limit=10)
-        unanswered = [t for t in result.data if t.last_direction == "inbound" and t.thread_id not in handled]
+    try:
+        while True:
+            result = commune.threads.list(inbox_id=INBOX_ID, limit=10)
+            unanswered = [t for t in result.data if t.last_direction == "inbound" and t.thread_id not in handled]
 
-        if unanswered:
-            print(f"Found {len(unanswered)} email(s) to handle...")
-            run_result = Runner.run_sync(
-                support_agent,
-                f"Check the inbox and reply to all {len(unanswered)} unanswered email(s)."
-            )
-            print(f"\nAgent response: {run_result.final_output}")
-            for t in unanswered:
-                handled.add(t.thread_id)
+            if unanswered:
+                print(f"Found {len(unanswered)} email(s) to handle...")
+                run_result = Runner.run_sync(
+                    support_agent,
+                    f"Check the inbox and reply to all {len(unanswered)} unanswered email(s)."
+                )
+                print(f"\nAgent response: {run_result.final_output}")
+                for t in unanswered:
+                    handled.add(t.thread_id)
 
-        time.sleep(30)
+            time.sleep(30)
+    except KeyboardInterrupt:
+        print("\nShutting down gracefully...")
 
 if __name__ == "__main__":
     main()

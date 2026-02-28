@@ -1,2 +1,3 @@
-anthropic
-commune-mail
+anthropic>=0.28.0
+commune-mail>=0.3.0
+python-dotenv>=1.0.0
