@@ -1,0 +1,22 @@
+[
+  {
+    "id": "shift_001",
+    "role": "Customer Service Representative",
+    "date": "Monday March 3, 9am–5pm",
+    "location": "Downtown Office, 123 Main St",
+    "workers": [
+      {"name": "Alex", "phone": "+15551234567"},
+      {"name": "Sam", "phone": "+15559876543"}
+    ]
+  },
+  {
+    "id": "shift_002",
+    "role": "Warehouse Associate",
+    "date": "Tuesday March 4, 7am–3pm",
+    "location": "Distribution Center, 456 Industrial Blvd",
+    "workers": [
+      {"name": "Jordan", "phone": "+15552223333"},
+      {"name": "Taylor", "phone": "+15554445555"}
+    ]
+  }
+]

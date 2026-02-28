@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "commune-ai": "latest",
+    "dotenv": "^16.0.0",
     "express": "^4.18.0",
     "openai": "^4.0.0"
   },

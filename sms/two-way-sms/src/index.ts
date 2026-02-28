@@ -21,6 +21,19 @@
 import express from 'express';
 import { CommuneClient } from 'commune-ai';
 import OpenAI from 'openai';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
+// Validate required environment variables at startup.
+// Failing here gives a clear error instead of a confusing API failure later.
+const requiredEnv = ['COMMUNE_API_KEY', 'OPENAI_API_KEY'];
+for (const varName of requiredEnv) {
+  if (!process.env[varName]) {
+    console.error(`Missing env var: ${varName} — copy .env.example to .env and fill it in.`);
+    process.exit(1);
+  }
+}
 
 const app = express();
 const port = process.env.PORT || 3000;
