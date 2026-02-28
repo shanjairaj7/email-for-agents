@@ -1,0 +1,18 @@
+{
+  "name": "sms-quickstart",
+  "version": "1.0.0",
+  "description": "Send your first Commune SMS in 60 seconds",
+  "scripts": {
+    "start": "npx tsx quickstart.ts",
+    "dev": "npx tsx quickstart.ts"
+  },
+  "dependencies": {
+    "commune-ai": "latest",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.0.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
