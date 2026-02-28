@@ -192,6 +192,43 @@ Full end-to-end TypeScript examples: webhook handlers with HMAC verification, mu
 
 ---
 
+## Use Cases
+
+Browse examples by what you want to build:
+
+| Use Case | Channel | Complexity |
+|----------|---------|------------|
+| [AI Email Support Agent](use-cases/customer-support/email-support-agent/) | Email | Beginner |
+| [SMS Worker Dispatch](use-cases/hiring-and-recruiting/sms-worker-dispatch/) | SMS | Intermediate |
+| [Candidate Outreach Sequence](use-cases/hiring-and-recruiting/candidate-email-outreach/) | Email | Intermediate |
+| [Cold Email Outreach](use-cases/sales-and-marketing/cold-outreach-sequences/) | Email | Intermediate |
+| [SMS Lead Qualification](use-cases/sales-and-marketing/sms-lead-qualification/) | SMS | Intermediate |
+| [Omnichannel Support](use-cases/customer-support/omnichannel-support/) | Email + SMS | Advanced |
+| [Incident Alert System](use-cases/notifications-and-alerts/incident-alerts/) | Email + SMS | Advanced |
+| [Multi-Agent Coordination](typescript/multi-agent/) | Email | Advanced |
+
+→ [Browse all use cases](use-cases/)
+
+---
+
+## Capabilities
+
+Reference examples for every Commune feature:
+
+| Capability | What it does | Get started |
+|-----------|-------------|-------------|
+| [Quickstart](capabilities/quickstart/) | Give your agent an email + phone | 3 lines of code |
+| [Email Threading](capabilities/email-threading/) | Reply in the same thread | RFC 5322 explained |
+| [Structured Extraction](capabilities/structured-extraction/) | Auto-parse email fields to JSON | Zero extra LLM calls |
+| [Semantic Search](capabilities/semantic-search/) | Natural language inbox search | Vector embeddings |
+| [Webhook Delivery](capabilities/webhook-delivery/) | Receive emails in real time | HMAC verified, 8 retries |
+| [Phone Numbers](capabilities/phone-numbers/) | Agent phone number management | Provision + SMS + voice |
+| [SMS](capabilities/sms/) | Send, receive, broadcast SMS | Quickstart → mass SMS |
+
+→ [Browse all capabilities](capabilities/)
+
+---
+
 ### SMS
 
 Your agent can also send and receive SMS.

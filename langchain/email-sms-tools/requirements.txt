@@ -1,0 +1,4 @@
+commune-mail
+langchain
+langchain-openai
+openai

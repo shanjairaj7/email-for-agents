@@ -1,0 +1,12 @@
+Subject: {company} + {your_company}
+
+Hi {first_name},
+
+{personalized_opening_sentence_referencing_their_context}
+
+{one_sentence_value_prop_tied_to_their_specific_situation}
+
+{soft_call_to_action_no_more_than_one_question}
+
+{sign_off},
+{from_name}

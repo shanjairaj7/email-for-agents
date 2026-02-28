@@ -8,8 +8,9 @@ LangChain tools powered by Commune give your chain a real inbox. Decorate a Pyth
 
 | Example | Description |
 |---------|-------------|
-| [Customer Support Agent](customer_support/) | Read inbound tickets, classify by urgency, draft and send replies with thread context |
-| [Lead Outreach](lead_outreach/) | Pull contacts from a list, personalise outreach using thread history, send and track replies |
+| [Customer Support Agent](customer-support/) | Read inbound tickets, search a knowledge base, and send threaded replies automatically |
+| [Lead Outreach](lead-outreach/) | Pull contacts from a CSV, write personalised outreach, send and continue conversations |
+| [Email & SMS Tools](email-sms-tools/) | Reusable `get_email_tools` / `get_sms_tools` factories — drop into any LangChain agent |
 
 ---
 

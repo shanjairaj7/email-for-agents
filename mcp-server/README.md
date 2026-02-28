@@ -1,77 +1,141 @@
-# MCP Server Email & SMS Examples
+# Commune MCP Server — Email & SMS for Claude, Cursor & VS Code
 
-Run `commune-mcp` as a local MCP server and connect it to Claude Desktop, Cursor, Windsurf, or any MCP-compatible client. No SDK integration, no code changes — the model calls Commune tools directly from within a chat session.
+Add email and SMS superpowers to any MCP-compatible AI. Gives Claude Desktop, Cursor, and VS Code access to 13 email & SMS tools powered by Commune.
 
----
-
-## Examples
-
-| Example | Description |
-|---------|-------------|
-| [Customer Support via Claude Desktop](claude_desktop/) | Full support workflow through a Claude Desktop conversation |
-| [SMS Notifications via MCP](sms/) | Provision a phone number and send SMS from within a chat session |
-| [Structured Extraction via MCP](extraction/) | Define schemas and query structured data extracted from inbound emails |
-
----
-
-## Install
-
-```bash
-npm install -g commune-mcp
-# or
-pip install commune-mcp
+```
+"Check my support inbox, summarize the unread threads, and reply to anything about billing"
 ```
 
-## Configure
+That's it. Claude reads, writes, searches, and organizes your email and SMS — right from the chat.
 
-### Claude Desktop
+---
 
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows):
+## Compatibility
+
+| Client | Status |
+|---|---|
+| Claude Desktop | Supported |
+| Cursor | Supported |
+| VS Code (GitHub Copilot) | Supported |
+| Zed | Supported |
+| Any MCP-compatible client | Supported |
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A([Claude Desktop\nCursor / VS Code / Zed]) -->|MCP protocol\nstdio| B[Commune MCP Server\nnode dist/index.js]
+    B -->|HTTPS REST| C[Commune API]
+    C --> D([Email\nInfrastructure])
+    C --> E([SMS\nInfrastructure])
+```
+
+The MCP server runs as a local process on your machine. Claude communicates with it over stdio using the Model Context Protocol. The server then calls the Commune API on your behalf — your API key never leaves your machine.
+
+---
+
+## Quickstart
+
+### 1. Get a Commune API key
+
+Sign up at [commune.email](https://commune.email) and copy your API key from the dashboard. It starts with `comm_`.
+
+### 2. Build the server
+
+```bash
+git clone https://github.com/commune-email/email-for-agents
+cd email-for-agents/mcp-server
+npm install && npm run build
+```
+
+Note the absolute path to the built file — you'll need it in the next step:
+
+```bash
+pwd
+# e.g. /Users/you/email-for-agents/mcp-server
+# dist file will be at /Users/you/email-for-agents/mcp-server/dist/index.js
+```
+
+### 3. Configure your MCP client
+
+#### Claude Desktop
+
+Open the config file:
+
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+
+Add the `commune` entry:
 
 ```json
 {
   "mcpServers": {
     "commune": {
-      "command": "commune-mcp",
-      "args": [],
+      "command": "node",
+      "args": ["/absolute/path/to/mcp-server/dist/index.js"],
       "env": {
-        "COMMUNE_API_KEY": "comm_..."
+        "COMMUNE_API_KEY": "comm_your_key_here"
       }
     }
   }
 }
 ```
 
-Restart Claude Desktop. The Commune tools appear automatically in the tool selector.
+Replace `/absolute/path/to/mcp-server/dist/index.js` with the real path from step 2. Restart Claude Desktop — you should see the Commune tools appear in the tools panel.
 
-### Cursor
+#### Cursor
 
-Add to `.cursor/mcp.json` in your project root (or `~/.cursor/mcp.json` globally):
+Add to `.cursor/mcp.json` in your project root (or `~/.cursor/mcp.json` for global):
 
 ```json
 {
   "mcpServers": {
     "commune": {
-      "command": "commune-mcp",
+      "command": "node",
+      "args": ["/absolute/path/to/mcp-server/dist/index.js"],
       "env": {
-        "COMMUNE_API_KEY": "comm_..."
+        "COMMUNE_API_KEY": "comm_your_key_here"
       }
     }
   }
 }
 ```
 
-### Windsurf
+#### VS Code (GitHub Copilot)
 
-Add to `~/.codeium/windsurf/mcp_config.json`:
+Add to `.vscode/mcp.json`:
 
 ```json
 {
-  "mcpServers": {
+  "servers": {
     "commune": {
-      "command": "commune-mcp",
+      "type": "stdio",
+      "command": "node",
+      "args": ["/absolute/path/to/mcp-server/dist/index.js"],
       "env": {
-        "COMMUNE_API_KEY": "comm_..."
+        "COMMUNE_API_KEY": "comm_your_key_here"
+      }
+    }
+  }
+}
+```
+
+#### Zed
+
+Add to `~/.config/zed/settings.json`:
+
+```json
+{
+  "context_servers": {
+    "commune": {
+      "command": {
+        "path": "node",
+        "args": ["/absolute/path/to/mcp-server/dist/index.js"],
+        "env": {
+          "COMMUNE_API_KEY": "comm_your_key_here"
+        }
       }
     }
   }
@@ -80,122 +144,169 @@ Add to `~/.codeium/windsurf/mcp_config.json`:
 
 ---
 
-## Available tools
+## Tools reference
 
-Once connected, the model has access to these tools automatically:
+13 tools across email and SMS:
 
-| Tool | Description |
-|------|-------------|
-| `commune_create_inbox` | Create an inbox and get a real email address |
-| `commune_list_threads` | List threads in an inbox |
-| `commune_get_thread` | Read all messages in a thread |
-| `commune_send_message` | Send or reply to an email |
-| `commune_search_threads` | Semantic search across threads |
-| `commune_set_thread_status` | Update thread status |
-| `commune_send_sms` | Send an SMS from a provisioned number |
-| `commune_provision_phone` | Get a real phone number |
-
----
-
-## Usage example
-
-With `commune-mcp` running in Claude Desktop, you can have natural conversations:
-
-> "Create an inbox called `support`, check if there are any new messages, and reply to any open tickets."
-
-Claude will call `commune_create_inbox`, then `commune_list_threads`, then `commune_get_thread` for each open thread, then `commune_send_message` for each reply — all in a single conversation turn, with no code written.
-
-### SMS via MCP
-
-> "Give me a phone number I can use for notifications, then send a test SMS to +14155551234 saying 'Your order has shipped.'"
-
-Claude calls `commune_provision_phone`, receives the number, then calls `commune_send_sms` — no SDK, no code, just a conversation.
+| Tool | Category | Description |
+|---|---|---|
+| `commune_list_inboxes` | Email | List all inboxes and their addresses |
+| `commune_create_inbox` | Email | Create a new inbox (e.g. `support@yourdomain.commune.email`) |
+| `commune_list_threads` | Email | List threads in an inbox, flagged by reply status |
+| `commune_get_thread` | Email | Fetch all messages in a thread |
+| `commune_send_email` | Email | Send a new email or reply in an existing thread |
+| `commune_search_emails` | Email | Semantic search across threads using natural language |
+| `commune_set_thread_status` | Email | Set status: `open`, `needs_reply`, `waiting`, or `closed` |
+| `commune_tag_thread` | Email | Add tags to a thread for triage and routing |
+| `commune_list_phone_numbers` | SMS | List provisioned phone numbers |
+| `commune_send_sms` | SMS | Send an SMS to any E.164 number |
+| `commune_list_sms_conversations` | SMS | List all SMS conversations |
+| `commune_get_sms_thread` | SMS | Fetch full message history with a specific number |
+| `commune_search_sms` | SMS | Semantic search across SMS messages |
 
 ---
 
-## Running the MCP server manually
+## Example prompts
 
-For development or non-standard clients:
+Try these in Claude Desktop after connecting the server:
+
+**Email**
+
+```
+Create an inbox called "support" and give me the email address
+```
+
+```
+Check my support inbox and summarize the last 5 email threads
+```
+
+```
+Which threads in my inbox are still waiting for a reply?
+```
+
+```
+Read thread abc123 and reply saying the issue has been resolved, then mark it closed
+```
+
+```
+Search my emails for anything related to billing disputes
+```
+
+```
+Tag all threads mentioning "refund" with the tags billing and urgent
+```
+
+**SMS**
+
+```
+Send a text to +14155551234 saying "Your order has shipped, expected delivery Friday"
+```
+
+```
+Show me all SMS conversations and summarize any that need a reply
+```
+
+```
+Search my SMS messages for anything about appointment cancellations
+```
+
+**Combined workflows**
+
+```
+Check my support inbox, find any emails about shipping delays, reply to each one,
+mark them waiting, and send an SMS update to any customer who left a phone number
+```
+
+```
+Create a daily briefing: summarize all open email threads and any unanswered SMS
+conversations from the last 24 hours
+```
+
+---
+
+## Development
+
+Run in development mode with live reload (no build step required):
 
 ```bash
-# Start the MCP server on stdio (default — used by Claude Desktop, Cursor)
-COMMUNE_API_KEY=comm_... commune-mcp
-
-# Start on a TCP port (for clients that prefer HTTP transport)
-COMMUNE_API_KEY=comm_... commune-mcp --transport http --port 3100
+npm run dev
 ```
 
-### Verify the server is working
+Build for production:
 
 ```bash
-# List available tools
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | COMMUNE_API_KEY=comm_... commune-mcp
+npm run build
+# output: dist/index.js
+```
+
+Run the built server directly (useful for testing outside of an MCP client):
+
+```bash
+COMMUNE_API_KEY=comm_your_key node dist/index.js
+```
+
+The server communicates over stdio. If it starts correctly you'll see:
+
+```
+Commune MCP server running on stdio
+```
+
+Inspect the tool schemas without a client using the MCP inspector:
+
+```bash
+npx @modelcontextprotocol/inspector node dist/index.js
 ```
 
 ---
 
-## Building a custom MCP server
+## Environment variables
 
-If you want to build your own MCP server that includes Commune alongside other tools:
+| Variable | Required | Description |
+|---|---|---|
+| `COMMUNE_API_KEY` | Yes | Your Commune API key (starts with `comm_`) |
 
-```typescript
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { CommuneClient } from 'commune-ai';
-import { z } from 'zod';
+Copy `.env.example` to `.env` for local development:
 
-const commune = new CommuneClient({ apiKey: process.env.COMMUNE_API_KEY! });
-const server = new McpServer({ name: 'my-commune-mcp', version: '1.0.0' });
-
-server.tool(
-    'send_email',
-    'Send an email from the agent inbox. Provide thread_id to reply to an existing conversation.',
-    {
-        to:        z.string().email().describe('Recipient email address'),
-        subject:   z.string().describe('Email subject'),
-        body:      z.string().describe('Plain text email body'),
-        inbox_id:  z.string().describe('Commune inbox ID to send from'),
-        thread_id: z.string().optional().describe('Thread ID to reply into (optional)'),
-    },
-    async ({ to, subject, body, inbox_id, thread_id }) => {
-        const msg = await commune.messages.send({
-            to,
-            subject,
-            text: body,
-            inboxId: inbox_id,
-            threadId: thread_id,
-        });
-        return {
-            content: [{ type: 'text', text: `Email sent. Message ID: ${msg.id}` }],
-        };
-    }
-);
-
-server.tool(
-    'provision_phone_number',
-    'Provision a real phone number for sending and receiving SMS.',
-    {},
-    async () => {
-        const phone = await commune.phoneNumbers.provision();
-        return {
-            content: [{ type: 'text', text: `Phone number provisioned: ${phone.number} (ID: ${phone.id})` }],
-        };
-    }
-);
-
-const transport = new StdioServerTransport();
-await server.connect(transport);
+```bash
+cp .env.example .env
+# then edit .env and add your key
 ```
 
----
-
-## Tips
-
-- Restart the client (Claude Desktop, Cursor) after changing `mcp.json` — MCP servers are loaded at startup
-- Set `COMMUNE_API_KEY` in the `env` block, not in your shell — the client passes environment variables to the server process
-- Use the MCP inspector (`npx @modelcontextprotocol/inspector commune-mcp`) to debug tool schemas during development
-- For production use, prefer the Python or TypeScript SDK — MCP is best for interactive sessions and prototyping
+The `.env` file is for local tooling only. In production MCP clients, pass the key via the `env` field in the client config as shown above — the MCP client injects it as a process environment variable when it spawns the server.
 
 ---
 
-[Back to main README](../README.md)
+## How it works
+
+The server implements the [Model Context Protocol](https://modelcontextprotocol.io/) using the official `@modelcontextprotocol/sdk`. It runs as a stdio subprocess — the MCP client (Claude Desktop, Cursor, etc.) spawns it on startup, sends JSON-RPC messages over stdin, and reads responses from stdout. Logs go to stderr and are visible in the client's MCP console.
+
+Each tool maps directly to one or more calls in the `commune-ai` TypeScript SDK. There is no network proxy, no additional server, and no data persisted locally — every call goes directly from the MCP server process to the Commune API over HTTPS.
+
+---
+
+## Troubleshooting
+
+**Tools don't appear in Claude Desktop**
+
+1. Check the config file path and JSON syntax — a single missing comma will break parsing.
+2. Confirm the path in `args` is absolute and the file exists: `ls /your/path/to/dist/index.js`
+3. Restart Claude Desktop fully (Cmd+Q, not just close the window).
+4. Open the MCP console in Claude Desktop (Settings > Developer) and check for error output.
+
+**`Error: COMMUNE_API_KEY is not set`**
+
+The `env` field in the MCP config is required. Make sure your key is in the `env` block of the client config, not just in a local `.env` file.
+
+**`Error: Cannot find module`**
+
+Run `npm run build` from the `mcp-server/` directory. The `dist/` folder must exist before pointing a client at `dist/index.js`.
+
+**Tool call returns an error**
+
+The server returns errors as text content rather than crashing, so Claude will read the error message and can often self-correct. Check that the inbox ID, thread ID, or phone number ID you're using is valid by calling the corresponding `list` tool first.
+
+---
+
+## License
+
+MIT — see [LICENSE](../LICENSE).

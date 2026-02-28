@@ -1,0 +1,12 @@
+Subject: Re: {company} + {your_company}
+
+Hi {first_name},
+
+{brief_reference_to_initial_email_one_sentence}
+
+{one_new_angle_or_proof_point_relevant_to_their_role}
+
+Worth a quick 15-minute call this week?
+
+{sign_off},
+{from_name}

@@ -1,0 +1,66 @@
+{
+  "name": "job_application",
+  "enabled": true,
+  "schema": {
+    "type": "object",
+    "description": "Extracts structured fields from inbound job application emails",
+    "properties": {
+      "candidate_name": {
+        "type": "string",
+        "description": "Full name of the applicant"
+      },
+      "role_applied_for": {
+        "type": "string",
+        "description": "Job title or position the candidate is applying for"
+      },
+      "years_of_experience": {
+        "type": "number",
+        "description": "Total years of relevant professional experience as a number"
+      },
+      "current_company": {
+        "type": "string",
+        "description": "Candidate's current or most recent employer"
+      },
+      "current_title": {
+        "type": "string",
+        "description": "Candidate's current or most recent job title"
+      },
+      "skills": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Technical skills, languages, frameworks, or tools the candidate mentions (e.g. Python, React, PostgreSQL, AWS)"
+      },
+      "education": {
+        "type": "string",
+        "description": "Highest level of education or degree mentioned (e.g. 'BS Computer Science, MIT')"
+      },
+      "availability": {
+        "type": "string",
+        "description": "When the candidate is available to start (e.g. 'immediately', '2 weeks notice', 'March 1')"
+      },
+      "desired_salary": {
+        "type": "string",
+        "description": "Desired salary or compensation range if mentioned"
+      },
+      "remote_preference": {
+        "type": "string",
+        "enum": ["remote", "hybrid", "onsite", "flexible", "not_stated"],
+        "description": "Candidate's stated preference for remote or in-office work"
+      },
+      "portfolio_url": {
+        "type": "string",
+        "description": "URL to portfolio, GitHub, LinkedIn, or personal website if mentioned"
+      },
+      "has_resume_attached": {
+        "type": "boolean",
+        "description": "Whether the email mentions or appears to include a resume attachment"
+      },
+      "cover_letter_summary": {
+        "type": "string",
+        "description": "One to two sentence summary of why the candidate says they are a good fit"
+      }
+    }
+  }
+}

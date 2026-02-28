@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Maria Santos",
+    "phone": "+14155550101",
+    "status": "available",
+    "skills": ["warehouse", "forklift", "inventory"],
+    "rating": 4.8,
+    "shifts_completed": 42
+  },
+  {
+    "name": "James Wilson",
+    "phone": "+14155550102",
+    "status": "available",
+    "skills": ["delivery", "warehouse", "heavy lifting"],
+    "rating": 4.5,
+    "shifts_completed": 29
+  },
+  {
+    "name": "Priya Nair",
+    "phone": "+14155550103",
+    "status": "available",
+    "skills": ["event staffing", "hospitality", "cashier"],
+    "rating": 4.9,
+    "shifts_completed": 67
+  },
+  {
+    "name": "DeShawn Carter",
+    "phone": "+14155550104",
+    "status": "available",
+    "skills": ["warehouse", "forklift", "logistics"],
+    "rating": 4.7,
+    "shifts_completed": 55
+  },
+  {
+    "name": "Lena Fischer",
+    "phone": "+14155550105",
+    "status": "unavailable",
+    "skills": ["event staffing", "hospitality"],
+    "rating": 4.6,
+    "shifts_completed": 18
+  },
+  {
+    "name": "Kwame Asante",
+    "phone": "+14155550106",
+    "status": "available",
+    "skills": ["delivery", "driving", "warehouse"],
+    "rating": 4.4,
+    "shifts_completed": 33
+  },
+  {
+    "name": "Sofia Reyes",
+    "phone": "+14155550107",
+    "status": "available",
+    "skills": ["cashier", "inventory", "customer service"],
+    "rating": 4.8,
+    "shifts_completed": 51
+  },
+  {
+    "name": "Tyler Nguyen",
+    "phone": "+14155550108",
+    "status": "available",
+    "skills": ["warehouse", "heavy lifting", "forklift"],
+    "rating": 4.3,
+    "shifts_completed": 22
+  }
+]
