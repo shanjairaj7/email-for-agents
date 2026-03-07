@@ -49,6 +49,6 @@ Many of these ADRs address the same underlying problem from different angles:
 
 - **Correctness** (thread continuity): ADR-001, ADR-006
 - **Security** (webhook integrity, injection): ADR-002, ADR-007
-- **Performance** (event loop, connection pools): ADR-005, ADR-008, ADR-010
+- **Performance** (event loop, connection pools): ADR-005, ADR-008
 - **Cost** (extraction without LLM, deduplication): ADR-003, ADR-006
 - **Isolation** (per-agent state): ADR-004
