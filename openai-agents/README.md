@@ -110,10 +110,10 @@ async def handle_email(request: Request):
 
 ## Examples in this folder
 
-| File | Description |
-|------|-------------|
-| `customer_support_agent.py` | Support agent with human escalation handoff |
-| `async_email_agent.py` | Async agent with parallel inbox processing |
+| Directory | Description |
+|-----------|-------------|
+| [`support-agent/`](support-agent/) | Support agent with triage, search history, and human escalation handoff |
+| [`tools/`](tools/) | Reusable `@function_tool` definitions for email and SMS |
 
 ## Tips
 

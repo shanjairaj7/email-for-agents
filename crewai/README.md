@@ -128,11 +128,10 @@ Each agent monitors its own inbox, picks up assigned tasks, and replies into the
 
 ## Examples in this folder
 
-| File | Description |
-|------|-------------|
-| `customer_support_crew.py` | Triage → specialist → QA pipeline |
-| `lead_outreach_crew.py` | Researcher + writer + sender crew |
-| `multi_agent_coordination.py` | Agents handoff subtasks via email threads |
+| Directory | Description |
+|-----------|-------------|
+| [`support-crew/`](support-crew/) | Triage → specialist → QA pipeline |
+| [`outreach-crew/`](outreach-crew/) | Researcher + writer + sender crew |
 
 ## Tips
 

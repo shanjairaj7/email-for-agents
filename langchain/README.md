@@ -126,11 +126,11 @@ def handle_inbound_email():
 
 ## Examples in this folder
 
-| File | Description |
-|------|-------------|
-| `customer_support_agent.py` | Full support workflow: classify → search history → reply |
-| `lead_outreach_agent.py` | Personalized outreach with open tracking |
-| `async_support_agent.py` | Async version using AsyncCommuneClient |
+| Directory | Description |
+|-----------|-------------|
+| [`customer-support/`](customer-support/) | Full support workflow: classify → search history → reply in thread |
+| [`lead-outreach/`](lead-outreach/) | Personalized outreach sequences with open tracking |
+| [`email-sms-tools/`](email-sms-tools/) | Combined email + SMS tool definitions for LangChain agents |
 
 ## TypeScript version
 

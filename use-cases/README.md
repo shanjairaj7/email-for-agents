@@ -11,7 +11,6 @@ Real-world production patterns organized by domain. Every example is standalone 
 | [AI Email Support Agent](customer-support/email-support-agent/) | LangChain + Commune | Beginner |
 | [SMS Support Bot](customer-support/sms-support/) | Python + Commune | Beginner |
 | [Omnichannel Support (Email + SMS)](customer-support/omnichannel-support/) | Python + Commune | Advanced |
-| [Ticket Triage + Routing](customer-support/ticket-triage/) | CrewAI + Commune | Intermediate |
 
 ### Hiring & Recruiting
 
@@ -28,14 +27,12 @@ Real-world production patterns organized by domain. Every example is standalone 
 | [Cold Email Outreach](sales-and-marketing/cold-outreach-sequences/) | Python + Commune | Intermediate |
 | [SMS Lead Qualification](sales-and-marketing/sms-lead-qualification/) | Python + Commune | Intermediate |
 | [Newsletter Agent](sales-and-marketing/newsletter-agent/) | Python + Commune | Beginner |
-| [Follow-up Sequence](sales-and-marketing/follow-up-sequences/) | CrewAI + Commune | Advanced |
 
 ### Notifications & Alerts
 
 | Example | Stack | Complexity |
 |---------|-------|------------|
 | [Incident Alert System](notifications-and-alerts/incident-alerts/) | Python + Commune | Advanced |
-| [Scheduled Digest Emails](notifications-and-alerts/digest-emails/) | Python + Commune | Beginner |
 | [Transactional SMS](notifications-and-alerts/order-and-transactional-sms/) | Python + Commune | Beginner |
 
 ### Research

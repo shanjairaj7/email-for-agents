@@ -157,12 +157,14 @@ results = client.search.threads(
 
 ## Examples in this folder
 
-| File | Description |
-|------|-------------|
-| `provision_and_send.py` | Get a number and send first SMS |
-| `two_way_sms_agent.py` | Receive SMS, process with LLM, reply |
-| `email_sms_escalation.py` | Escalate from email to SMS after no reply |
-| `mass_sms_campaign.py` | Send to a list with deduplication |
+| Directory | Description |
+|-----------|-------------|
+| [`quickstart/`](quickstart/) | Provision a number and send your first SMS |
+| [`two-way-sms/`](two-way-sms/) | Receive SMS, process with LLM, reply in thread |
+| [`alert-agent/`](alert-agent/) | Send alerts and escalations via SMS |
+| [`hiring-agent/`](hiring-agent/) | Shift dispatch and worker confirmation flows |
+| [`personal-agent/`](personal-agent/) | Personal SMS assistant patterns |
+| [`sms-marketing/`](sms-marketing/) | Send to a list with deduplication and opt-out handling |
 
 ## Related
 
