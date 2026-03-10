@@ -2,7 +2,7 @@
 
 [![OpenClaw](https://img.shields.io/badge/OpenClaw-compatible-orange)](https://openclaw.ai)
 [![Commune](https://img.shields.io/badge/Commune-email%20%2B%20SMS-blue)](https://commune.email)
-[![Skills](https://img.shields.io/badge/skills-2%20included-green)](#skills)
+[![Skills](https://img.shields.io/badge/skills-3%20included-green)](#skills)
 
 **Give your OpenClaw agent its own email address and phone number. Ask it to check email, reply to threads, and send SMS — from WhatsApp, Telegram, iMessage, or wherever your agent lives.**
 
@@ -83,6 +83,7 @@ This starter includes two OpenClaw skills:
 |-------|-------------|------|
 | `commune-email` | Send, receive, search, and manage email threads | `skills/commune-email/SKILL.md` |
 | `commune-sms` | Send SMS, read conversations, list phone numbers | `skills/commune-sms/SKILL.md` |
+| `commune-agent-network` | Agent-to-agent task delegation via email addresses | `skills/commune-agent-network/SKILL.md` |
 
 Each skill includes a companion Node.js CLI helper so your agent can shell out to perform operations without needing to construct raw HTTP requests.
 
@@ -90,20 +91,24 @@ Each skill includes a companion Node.js CLI helper so your agent can shell out t
 
 ## Installation
 
-```bash
-# Clone this repo
-git clone https://github.com/commune-email/email-for-agents
-cd email-for-agents/openclaw-email-sms
+**Option 1: ClawHub (one command)**
 
-# Copy skills to your OpenClaw workspace
+```bash
+clawhub install shanjairaj7/commune
+```
+
+This installs all Commune skills — email, SMS, and agent network — directly into your OpenClaw workspace.
+
+**Option 2: Manual install**
+
+```bash
+# Clone and copy skills
+git clone https://github.com/shanjai-raj/commune-openclaw-email-sms-quickstart
+cd commune-openclaw-email-sms-quickstart
+
 cp -r skills/commune-email ~/.openclaw/workspace/skills/
 cp -r skills/commune-sms ~/.openclaw/workspace/skills/
-
-# Set your Commune API key
-export COMMUNE_API_KEY=comm_your_key_here
-
-# Verify installation
-openclaw skill list | grep commune
+cp -r skills/commune-agent-network ~/.openclaw/workspace/skills/
 ```
 
 Then talk to your agent:
