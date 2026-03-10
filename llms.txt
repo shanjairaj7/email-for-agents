@@ -1,8 +1,37 @@
 # email-for-agents
 
-> Production-ready code examples for giving AI agents a real email address and phone number. Covers LangChain, CrewAI, OpenAI Agents SDK, Claude, MCP Server, TypeScript, and SMS. Powered by Commune — email + SMS infrastructure built natively for AI agents.
+> Production-ready code examples for giving AI agents a real email address and phone number. Covers LangChain, CrewAI, OpenAI Agents SDK, Claude, MCP Server, TypeScript, SMS, OpenClaw, and agent-to-agent communication. Powered by Commune — email + SMS infrastructure built natively for AI agents.
 
 All examples are runnable with a Commune API key. Copy, paste, run.
+
+## Agent Identity
+
+Email is the identity layer for agents. A human has an email address as their internet identity. An agent gets a permanent inbox address that survives process restarts, framework changes, and infrastructure migrations. One call to `commune.inboxes.create(local_part="agent-name")` returns a real deliverable address.
+
+- [Agent identity and email as persistent identity](capabilities/quickstart/README.md)
+
+## Agent-to-Agent Communication
+
+Agents communicate through Commune the same way humans do — by sending each other email. Each agent has its own inbox address. Agents discover each other by address convention. Tasks are delegated as emails. Results are replies in the same thread. No shared database. No coordination layer.
+
+Key primitives:
+- `commune.inboxes.create(local_part)` — provision an inbox = create an agent identity
+- `commune.messages.send(to=agent.address, thread_id=task.thread_id)` — delegate task, bind reply to thread
+- `commune.inboxes.update(id, extraction_schema={...})` — configure typed task schema on worker inbox; Commune parses incoming tasks before webhook fires
+- `commune.search.threads(query)` — worker checks past similar tasks before starting duplicate work
+- `idempotency_key` on send — orchestrator retries safely; exactly one task email delivered
+- `commune.threads.messages(thread_id)` — read full task → result → follow-up chain
+
+- [Agent-to-agent communication patterns](agent-to-agent/README.md)
+- [Orchestrator example (Python)](agent-to-agent/orchestrator.py)
+- [Worker/webhook handler example (Python)](agent-to-agent/worker.py)
+
+## OpenClaw
+
+OpenClaw is an open-source personal agent framework. Commune provides first-party skills. Install: `bash install.sh` from the openclaw-email-sms directory. Skills: `commune-email` (inbox, threads, send, reply, search) and `commune-sms` (send, receive, phone numbers).
+
+- [OpenClaw skills and setup](openclaw-email-sms/README.md)
+- [Dedicated OpenClaw quickstart repo](https://github.com/shanjai-raj/commune-openclaw-email-sms-quickstart)
 
 ## Platforms
 
@@ -14,6 +43,7 @@ All examples are runnable with a Commune API key. Copy, paste, run.
 - [TypeScript examples](typescript/): Webhook handler, multi-agent coordination
 - [SMS examples](sms/): Alert agent, two-way SMS conversation handler
 - [OpenClaw integration](openclaw-email-sms/): Email & SMS skills for OpenClaw agents
+- [Agent-to-agent](agent-to-agent/): Typed task delegation, orchestrator/worker pattern, agent mesh
 
 ## Use Cases
 
@@ -33,15 +63,25 @@ All examples are runnable with a Commune API key. Copy, paste, run.
 - [Phone numbers](capabilities/phone-numbers/): Provision and manage phone numbers
 - [SMS](capabilities/sms/): Send and receive SMS messages
 
-## API & SDK
+## SDK
 
-- [Commune docs](https://docs.commune.email): Full REST API reference, guides
+Python: `pip install commune-mail` — `CommuneClient(api_key="comm_...")`
+TypeScript: `npm install commune-ai` — `new CommuneClient({ apiKey })`
+
+Key methods (Python / TypeScript):
+- `commune.inboxes.create(local_part)` / `commune.inboxes.create({ localPart })` — provision inbox, returns permanent address
+- `commune.messages.send(to, subject, text, inbox_id, thread_id?, idempotency_key?)` — send or reply; thread_id binds to existing conversation
+- `commune.threads.list(inbox_id, limit)` — list threads; `last_direction: "inbound"` = waiting for reply
+- `commune.threads.messages(thread_id)` — full message chain with direction, participants, content
+- `commune.search.threads(query, inbox_id)` — semantic/vector search across all messages
+- `commune.threads.set_status(thread_id, status)` — open / needs_reply / waiting / closed
+- `commune.sms.send(to, body, phone_number_id)` — send SMS from agent's phone number
+- `commune.phone_numbers.list()` / `commune.phone_numbers.provision()` — manage agent phone numbers
+- `verifyCommuneWebhook(rawBody, timestamp, signature, secret)` — verify inbound webhook (TypeScript)
+
+## API Reference
+
+- [Commune API docs](https://docs.commune.email): Full REST API reference, guides
 - [Python SDK](https://pypi.org/project/commune-mail/): `pip install commune-mail`
 - [TypeScript SDK](https://www.npmjs.com/package/commune-ai): `npm install commune-ai`
 - [Dashboard](https://commune.email/dashboard): Get API key, manage inboxes, view webhooks
-
-## Optional
-
-- [CHANGELOG](CHANGELOG.md): Version history
-- [CONTRIBUTING](CONTRIBUTING.md): How to add examples
-- [SECURITY](SECURITY.md): Responsible disclosure
