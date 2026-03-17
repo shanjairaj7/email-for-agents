@@ -39,7 +39,6 @@ For Cursor, add to `.cursor/mcp.json`. For VS Code (GitHub Copilot), add to `.vs
 "Reply to John's thread saying we're processing his refund"
 "Search for all emails about the payment issue"
 "Create a new inbox called billing under example.com"
-"Send an SMS to +14155551234 saying shipment is delayed"
 "Show me deliverability stats for the last 7 days"
 ```
 
@@ -57,23 +56,18 @@ Claude summarizes the result for you
 
 ## Tools reference
 
-13 tools across email and SMS:
+8 email tools:
 
-| Tool | Category | Description |
-|------|----------|-------------|
-| `commune_list_inboxes` | Email | List all inboxes and their addresses |
-| `commune_create_inbox` | Email | Create a new inbox |
-| `commune_list_threads` | Email | List threads in an inbox, flagged by reply status |
-| `commune_get_thread` | Email | Fetch all messages in a thread |
-| `commune_send_email` | Email | Send a new email or reply in an existing thread |
-| `commune_search_emails` | Email | Semantic search across threads using natural language |
-| `commune_set_thread_status` | Email | Set status: open, needs_reply, waiting, or closed |
-| `commune_tag_thread` | Email | Add tags to a thread for triage and routing |
-| `commune_list_phone_numbers` | SMS | List provisioned phone numbers |
-| `commune_send_sms` | SMS | Send an SMS to any E.164 number |
-| `commune_list_sms_conversations` | SMS | List all SMS conversations |
-| `commune_get_sms_thread` | SMS | Fetch full message history with a specific number |
-| `commune_search_sms` | SMS | Semantic search across SMS messages |
+| Tool | Description |
+|------|-------------|
+| `commune_list_inboxes` | List all inboxes and their addresses |
+| `commune_create_inbox` | Create a new inbox |
+| `commune_list_threads` | List threads in an inbox, flagged by reply status |
+| `commune_get_thread` | Fetch all messages in a thread |
+| `commune_send_email` | Send a new email or reply in an existing thread |
+| `commune_search_emails` | Semantic search across threads using natural language |
+| `commune_set_thread_status` | Set status: open, needs_reply, waiting, or closed |
+| `commune_tag_thread` | Add tags to a thread for triage and routing |
 
 ## Compatibility
 
@@ -97,7 +91,7 @@ Commune MCP Server (local process)
     ↓ HTTPS REST
 Commune API
     ↓
-Email + SMS infrastructure
+Email infrastructure
 ```
 
 ## Troubleshooting

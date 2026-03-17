@@ -175,4 +175,4 @@ outreach-crew/
 - **CRM integration** — replace `leads.csv` with a call to HubSpot, Salesforce, or any CRM API to pull live lead lists.
 - **Follow-up sequences** — use the saved `thread_id` values in a scheduled job that calls `send_followup_email` 3 and 7 days after the first send.
 - **Reply detection** — poll `commune.threads.list()` and check `last_direction` — if `inbound`, the lead replied. Route them to a qualification crew.
-- **SMS escalation** — if a lead doesn't reply to email within 7 days, use `commune.sms.send()` to send a brief SMS nudge.
+- **Follow-up via email** — if a lead doesn't reply within 7 days, send another follow-up email in the same thread.

@@ -16,9 +16,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [0.4.0] — 2025-02-28
 
 ### Added
-- `openclaw-email-sms/` — Email & SMS skills for OpenClaw agents. Includes two installable skills (`commune-email`, `commune-sms`) with companion CLI helpers and an automated install script.
-- `capabilities/phone-numbers/` — Full phone number management guide: provisioning, toll-free vs local, allow/block lists, MMS
-- `capabilities/sms/` — SMS capability deep-dive: send, receive webhooks, two-way conversations
+- OpenClaw email skill — installable `commune-email` skill with companion CLI helpers and an automated install script.
 
 ### Changed
 - Master README reorganized with three sections: Platforms, Use Cases, Capabilities
@@ -31,11 +29,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - `use-cases/` section — five use case categories with working examples:
-  - `customer-support/` — email agent, SMS bot, omnichannel
-  - `hiring-and-recruiting/` — SMS worker dispatch, candidate outreach, interview scheduler
-  - `sales-and-marketing/` — cold email sequences, SMS lead qualification, newsletter
+  - `customer-support/` — email agent, omnichannel
+  - `hiring-and-recruiting/` — candidate outreach, interview scheduler
+  - `sales-and-marketing/` — cold email sequences, newsletter
   - `research/` — email research agent
-  - `notifications-and-alerts/` — incident alerts, transactional SMS
+  - `notifications-and-alerts/` — incident alerts
 - `capabilities/` section — six capability deep-dives:
   - `quickstart/`, `email-threading/`, `extraction/`, `search/`, `webhooks/`
 
@@ -45,8 +43,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - `typescript/` — Webhook handler and multi-agent coordination in TypeScript
-- `sms/` — SMS alert agent and two-way SMS conversation handler
-- `mcp-server/` — 13-tool MCP server with Claude Desktop + Cursor configuration
+- `mcp-server/` — MCP server with Claude Desktop + Cursor configuration
 
 ---
 
@@ -54,7 +51,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 - Initial release with examples for four platforms:
-  - `langchain/` — customer support, lead outreach, email+SMS tools
+  - `langchain/` — customer support, lead outreach
   - `crewai/` — support crew, outreach crew
   - `openai-agents/` — support agent, multi-agent handoff
   - `claude/` — support agent, extraction agent
