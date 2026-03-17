@@ -1,4 +1,4 @@
-# LangChain + Commune — Email & SMS for Your Agents
+# LangChain + Commune — Email for Your Agents
 
 Give your LangChain agents a real inbox. Email becomes a first-class tool in your chain — send, receive, search, and reply in thread using the `@tool` decorator.
 
@@ -7,8 +7,8 @@ Give your LangChain agents a real inbox. Email becomes a first-class tool in you
 ```
 LangChain Agent
     ↓ uses @tool
-send_email() → Commune → recipient's inbox
-read_inbox()  ← Commune ← inbound webhook fires
+send_email()     → Commune → recipient's inbox
+read_inbox()     ← Commune ← inbound webhook fires
 search_threads() → vector search across history
 reply_in_thread() → RFC 5322 threaded reply
 ```
@@ -130,7 +130,6 @@ def handle_inbound_email():
 |-----------|-------------|
 | [`customer-support/`](customer-support/) | Full support workflow: classify → search history → reply in thread |
 | [`lead-outreach/`](lead-outreach/) | Personalized outreach sequences with open tracking |
-| [`email-sms-tools/`](email-sms-tools/) | Combined email + SMS tool definitions for LangChain agents |
 
 ## TypeScript version
 

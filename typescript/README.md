@@ -76,11 +76,6 @@ async function handleEvent(event: CommuneWebhookEvent): Promise<void> {
             break;
         }
 
-        case "sms.received": {
-            const { phone_number_id, from_number, body } = event.data;
-            // Handle inbound SMS...
-            break;
-        }
     }
 }
 
@@ -121,30 +116,12 @@ const results = await commune.search.threads({
 const context = results.map(r => r.subject + ": " + r.snippet).join("\n");
 ```
 
-## SMS flow
-
-```typescript
-// Provision a real phone number
-const phone = await commune.phoneNumbers.provision();
-console.log(`Phone number: ${phone.number}`);
-
-// Send SMS
-await commune.sms.send({
-    to: "+14155551234",
-    body: "Your order has shipped, expected delivery Friday.",
-    phoneNumberId: phone.id,
-});
-
-// Inbound SMS arrives via webhook — same handler as email, event.type === "sms.received"
-```
-
 ## Examples in this folder
 
 | File | Description |
 |------|-------------|
 | `customer_support_agent.ts` | Express webhook + reply flow |
 | `multi_agent_coordination.ts` | Two agents coordinating via email threads |
-| `sms_notifications.ts` | Provision number, send SMS, handle replies |
 | `webhook_handler.ts` | Reference HMAC verification implementation |
 
 ## Tips

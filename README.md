@@ -4,11 +4,11 @@
 [![LangChain](https://img.shields.io/badge/LangChain-compatible-green)](langchain/)
 [![CrewAI](https://img.shields.io/badge/CrewAI-compatible-orange)](crewai/)
 [![MCP](https://img.shields.io/badge/MCP-server-purple)](mcp-server/)
-[![OpenClaw](https://img.shields.io/badge/OpenClaw-skills-orange)](openclaw-email-sms/)
+[![OpenClaw](https://img.shields.io/badge/OpenClaw-skills-orange)](openclaw-email-quickstart/)
 
-# Email & SMS for AI Agents
+# Email for AI Agents
 
-**Give your AI agent a real email address and phone number. Production-ready examples for LangChain, CrewAI, OpenAI Agents SDK, Claude, MCP, OpenClaw, and agent-to-agent networks. Powered by [Commune](https://commune.email).**
+**Give your AI agent a real email address. Production-ready examples for LangChain, CrewAI, OpenAI Agents SDK, Claude, MCP, OpenClaw, and agent-to-agent networks. Powered by [Commune](https://commune.email).**
 
 ---
 
@@ -50,21 +50,20 @@ That's a real, deliverable inbox. Your agent can now send replies, search its th
 
 ## OpenClaw
 
-> **OpenClaw users:** install the Commune email + SMS skills in 30 seconds. Your agent gets a real inbox and phone number it can use from WhatsApp, Telegram, or wherever it lives.
+> **OpenClaw users:** install the Commune email skill in 30 seconds. Your agent gets a real inbox it can use from WhatsApp, Telegram, or wherever it lives.
 
 ```bash
-git clone https://github.com/shanjai-raj/commune-openclaw-email-sms-quickstart
-cd commune-openclaw-email-sms-quickstart
+git clone https://github.com/commune-dev/commune-openclaw-email-quickstart
+cd commune-openclaw-email-quickstart
 bash install.sh
 ```
 
-The installer copies two skills into `~/.openclaw/workspace/skills/`:
+The installer copies the skill into `~/.openclaw/workspace/skills/`:
 - **`commune-email`** — send, receive, search, and manage email threads
-- **`commune-sms`** — send SMS, read conversations, manage phone numbers
 
-Once installed, your agent understands natural-language commands like "check my email", "reply to that thread about the contract", and "text Alex that I'm running late."
+Once installed, your agent understands natural-language commands like "check my email" and "reply to that thread about the contract."
 
-[→ Full OpenClaw setup guide](openclaw-email-sms/) · [→ Dedicated repo with use cases](https://github.com/shanjai-raj/commune-openclaw-email-sms-quickstart)
+[→ Dedicated repo with use cases](https://github.com/commune-dev/commune-openclaw-email-quickstart)
 
 ---
 
@@ -113,7 +112,6 @@ No shared database. No coordination layer. The thread IS the task context.
 | Customer Support Agent | [✅](langchain/) | [✅](crewai/) | [✅](openai-agents/) | [✅](claude/) | [✅](mcp-server/) | [✅](typescript/) | — |
 | Lead Outreach | [✅](langchain/) | [✅](crewai/) | — | [✅](claude/) | — | — | — |
 | Multi-Agent Coordination | — | [✅](crewai/) | — | — | — | [✅](typescript/) | [✅](agent-to-agent/) |
-| SMS Notifications | — | — | — | — | [✅](mcp-server/) | [✅](typescript/) | — |
 | Structured Extraction | — | — | — | [✅](claude/) | [✅](mcp-server/) | — | — |
 | Webhook Handler | — | — | — | — | — | [✅](typescript/) | — |
 | Task Delegation | — | — | — | — | — | — | [✅](agent-to-agent/) |
@@ -122,12 +120,11 @@ No shared database. No coordination layer. The thread IS the task context.
 
 ## Why email for agents?
 
-Most agent frameworks are great at reasoning — but stop short when it comes to communicating with the outside world asynchronously. Email and SMS fill that gap:
+Most agent frameworks are great at reasoning — but stop short when it comes to communicating with the outside world asynchronously. Email fills that gap:
 
 - **Agents are async by nature.** A task might take minutes or hours. Email is the right protocol for async handoffs — your agent sends, the user replies when ready, the thread stays intact.
 - **Email is the universal protocol.** Every system on the planet speaks SMTP. Your agent can talk to any user, any tool, any service — no integration required.
 - **Threading keeps context.** `In-Reply-To` and `References` headers (RFC 5322) tie every message to its thread. Your agent never loses the conversation history.
-- **SMS adds the urgency channel.** Some things need immediate attention. Two-way SMS lets your agent escalate, notify, and confirm — all from a real phone number.
 - **Agent-to-agent is next.** Agents will increasingly communicate with other agents — delegating tasks, routing results, building mesh networks. Email is the right protocol: async, persistent, addressable, universally supported.
 
 ### What Commune adds on top of bare SMTP
@@ -191,16 +188,9 @@ Every example is self-contained: install, set your key, run.
 
 ### OpenClaw
 
-OpenClaw is the most popular open-source personal agent framework. Commune provides first-party skills for email and SMS — install once, and your OpenClaw agent can manage a real inbox from any chat interface.
+OpenClaw is the most popular open-source personal agent framework. Commune provides a first-party email skill — install once, and your OpenClaw agent can manage a real inbox from any chat interface.
 
-| Example | Description |
-|---------|-------------|
-| [Personal Assistant](openclaw-email-sms/use-cases/personal-assistant/) | Agent manages your personal email — check, reply, summarize from WhatsApp |
-| [Company Agent](openclaw-email-sms/use-cases/company-assistant/) | Agent handles customer email: triage, draft replies, SMS escalation |
-| [Skill: commune-email](openclaw-email-sms/skills/) | Full email skill: create inboxes, read threads, send, reply, search |
-| [Skill: commune-sms](openclaw-email-sms/skills/) | SMS skill: send, receive, list phone numbers |
-
-[→ See all OpenClaw examples](openclaw-email-sms/) · [→ Dedicated quickstart repo](https://github.com/shanjai-raj/commune-openclaw-email-sms-quickstart)
+[→ Dedicated quickstart repo](https://github.com/commune-dev/commune-openclaw-email-quickstart)
 
 ---
 
@@ -220,7 +210,7 @@ Each agent gets its own inbox address. Agents delegate tasks by sending emails, 
 
 ### LangChain
 
-LangChain tools wrap Commune with the `@tool` decorator. Your chain gains `send_email`, `read_inbox`, `search_threads`, and `send_sms` as first-class tools — callable by any LLM in the chain.
+LangChain tools wrap Commune with the `@tool` decorator. Your chain gains `send_email`, `read_inbox`, and `search_threads` as first-class tools — callable by any LLM in the chain.
 
 | Example | Description |
 |---------|-------------|
@@ -278,7 +268,6 @@ Run `commune-mcp` as a local MCP server and connect it to Claude Desktop, Cursor
 | Example | Description |
 |---------|-------------|
 | [Customer Support via MCP](mcp-server/) | Full support workflow through Claude Desktop |
-| [SMS Notifications via MCP](mcp-server/) | Provision a number and send SMS from within a chat session |
 | [Structured Extraction via MCP](mcp-server/) | Define schemas and extract structured data from inbound mail |
 
 [→ See all MCP examples](mcp-server/)
@@ -287,13 +276,12 @@ Run `commune-mcp` as a local MCP server and connect it to Claude Desktop, Cursor
 
 ### TypeScript
 
-Full end-to-end TypeScript examples: webhook handlers with HMAC verification, multi-agent coordination with typed payloads, and SMS flows — all typed against the `commune-ai` SDK.
+Full end-to-end TypeScript examples: webhook handlers with HMAC verification and multi-agent coordination with typed payloads — all typed against the `commune-ai` SDK.
 
 | Example | Description |
 |---------|-------------|
 | [Customer Support Agent](typescript/) | Express webhook handler + Commune reply flow |
 | [Multi-Agent Coordination](typescript/) | Two agents hand off tasks over email with typed thread payloads |
-| [SMS Notifications](typescript/) | Provision a number, send SMS, handle inbound replies |
 | [Webhook Handler](typescript/) | Reference implementation with `verifyCommuneWebhook` and retry-safe handling |
 
 [→ See all TypeScript examples](typescript/)
@@ -307,12 +295,9 @@ Browse examples by what you want to build:
 | Use Case | Channel | Complexity |
 |----------|---------|------------|
 | [AI Email Support Agent](use-cases/customer-support/email-support-agent/) | Email | Beginner |
-| [SMS Worker Dispatch](use-cases/hiring-and-recruiting/sms-worker-dispatch/) | SMS | Intermediate |
 | [Candidate Outreach Sequence](use-cases/hiring-and-recruiting/candidate-email-outreach/) | Email | Intermediate |
 | [Cold Email Outreach](use-cases/sales-and-marketing/cold-outreach-sequences/) | Email | Intermediate |
-| [SMS Lead Qualification](use-cases/sales-and-marketing/sms-lead-qualification/) | SMS | Intermediate |
-| [Omnichannel Support](use-cases/customer-support/omnichannel-support/) | Email + SMS | Advanced |
-| [Incident Alert System](use-cases/notifications-and-alerts/incident-alerts/) | Email + SMS | Advanced |
+| [Incident Alert System](use-cases/notifications-and-alerts/incident-alerts/) | Email | Advanced |
 | [Multi-Agent Coordination](typescript/multi-agent/) | Email | Advanced |
 | [Agent-to-Agent Task Delegation](agent-to-agent/) | Email | Advanced |
 
@@ -326,38 +311,13 @@ Reference examples for every Commune feature:
 
 | Capability | What it does | Get started |
 |-----------|-------------|-------------|
-| [Quickstart](capabilities/quickstart/) | Give your agent an email + phone | 3 lines of code |
+| [Quickstart](capabilities/quickstart/) | Give your agent an email address | 3 lines of code |
 | [Email Threading](capabilities/email-threading/) | Reply in the same thread | RFC 5322 explained |
 | [Structured Extraction](capabilities/structured-extraction/) | Auto-parse email fields to JSON | Zero extra LLM calls |
 | [Semantic Search](capabilities/semantic-search/) | Natural language inbox search | Vector embeddings |
 | [Webhook Delivery](capabilities/webhook-delivery/) | Receive emails in real time | HMAC verified, 8 retries |
-| [Phone Numbers](capabilities/phone-numbers/) | Agent phone number management | Provision + SMS + voice |
-| [SMS](capabilities/sms/) | Send, receive, broadcast SMS | Quickstart → mass SMS |
 
 → [Browse all capabilities](capabilities/)
-
----
-
-### SMS
-
-Your agent can also send and receive SMS.
-
-```python
-# Provision a real phone number
-phone = commune.phoneNumbers.provision()
-print(phone.number)  # → +14155552671
-
-# Send an SMS
-commune.sms.send(
-    to="+14155551234",
-    body="Your order has shipped.",
-    phone_number_id=phone.id,
-)
-```
-
-Two-way conversations. Semantic search across SMS and email in a single unified index. Escalation from email thread to SMS with one method call.
-
-[→ See SMS examples](sms/)
 
 ---
 
@@ -420,8 +380,6 @@ for thread in results:
     print(thread.subject, thread.score)
 ```
 
-SMS messages are indexed in the same vector store. One query surfaces relevant context regardless of channel.
-
 </details>
 
 <details>
@@ -478,9 +436,6 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
 | `commune.threads.messages(thread_id)` | Get all messages in a thread |
 | `commune.search.threads({ query, inbox_id })` | Semantic search across threads |
 | `commune.threads.set_status(thread_id, status)` | Update thread status |
-| `commune.sms.send({ to, body, phone_number_id })` | Send an SMS |
-| `commune.phone_numbers.provision()` | Provision a real phone number |
-
 ### TypeScript (`commune-ai`)
 
 | Method | Description |
@@ -491,9 +446,6 @@ app.post('/webhook', express.raw({ type: 'application/json' }), (req, res) => {
 | `commune.threads.messages(threadId)` | Get all messages in a thread |
 | `commune.search.threads({ query, inboxId })` | Semantic search across threads |
 | `commune.threads.setStatus(threadId, status)` | Update thread status |
-| `commune.sms.send({ to, body, phoneNumberId })` | Send an SMS |
-| `commune.phoneNumbers.provision()` | Provision a real phone number |
-
 ---
 
 ## Interactive Notebooks

@@ -1,6 +1,6 @@
 # OpenAI Agents SDK + Commune — Email as Agent Tools
 
-Add email and SMS to OpenAI Agents SDK agents using `@function_tool`. The agent decides when to read, search, and reply — you just wire the tools.
+Add email to OpenAI Agents SDK agents using `@function_tool`. The agent decides when to read, search, and reply — you just wire the tools.
 
 ## Install
 
@@ -113,7 +113,7 @@ async def handle_email(request: Request):
 | Directory | Description |
 |-----------|-------------|
 | [`support-agent/`](support-agent/) | Support agent with triage, search history, and human escalation handoff |
-| [`tools/`](tools/) | Reusable `@function_tool` definitions for email and SMS |
+| [`tools/`](tools/) | Reusable `@function_tool` definitions for email |
 
 ## Tips
 

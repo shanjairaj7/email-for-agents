@@ -1,11 +1,11 @@
 # Contributing to email-for-agents
 
-Thanks for contributing! This repo exists to help developers give their AI agents a real email address and phone number — the more examples and frameworks covered, the more useful it is for everyone.
+Thanks for contributing! This repo exists to help developers give their AI agents a real email address — the more examples and frameworks covered, the more useful it is for everyone.
 
 ## What we welcome
 
 - **New platform integrations** — AutoGen, Pydantic AI, Haystack, Dify, n8n, Flowise, etc.
-- **New use-case examples** — real problems AI agents solve using email and SMS
+- **New use-case examples** — real problems AI agents solve using email
 - **Bug fixes** — if an example is broken, out of date, or uses the wrong API
 - **Capability demos** — showing off specific Commune features (threading, extraction, vector search, webhooks)
 - **Better documentation** — clearer READMEs, more helpful `.env.example` files
@@ -24,7 +24,7 @@ Thanks for contributing! This repo exists to help developers give their AI agent
 
 - Python: `ruff` for linting (`pip install ruff && ruff check .`)
 - TypeScript: strict mode, `tsc --noEmit` should pass
-- No real API keys, email addresses, or phone numbers in committed files
+- No real API keys or email addresses in committed files
 - Every `.env.example` uses obvious placeholders (`your_api_key_here`, not `sk-abc123`)
 
 ## Example structure

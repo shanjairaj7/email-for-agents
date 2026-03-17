@@ -238,5 +238,5 @@ python orchestrator.py
 
 - [Full capability reference: extraction schemas](../capabilities/extraction/)
 - [Full capability reference: webhook delivery](../capabilities/webhooks/)
-- [OpenClaw personal agent setup](../openclaw-email-sms/)
+- [OpenClaw personal agent setup](https://github.com/commune-dev/commune-openclaw-email-quickstart)
 - [TypeScript multi-agent patterns](../typescript/)

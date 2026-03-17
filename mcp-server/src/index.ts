@@ -2,7 +2,7 @@
 /**
  * Commune MCP Server
  *
- * Exposes Commune email & SMS as MCP tools for Claude Desktop, Cursor,
+ * Exposes Commune email as MCP tools for Claude Desktop, Cursor,
  * VS Code, and any MCP-compatible AI client.
  *
  * Install:
@@ -161,80 +161,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           },
         },
         required: ['thread_id', 'tags'],
-      },
-    },
-    // ── SMS tools ────────────────────────────────────────────────────────
-    {
-      name: 'commune_list_phone_numbers',
-      description: 'List provisioned phone numbers for SMS.',
-      inputSchema: { type: 'object', properties: {}, required: [] },
-    },
-    {
-      name: 'commune_send_sms',
-      description: 'Send an SMS message.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          to: {
-            type: 'string',
-            description:
-              'Recipient phone number in E.164 format (+14155551234)',
-          },
-          body: { type: 'string', description: 'SMS message text' },
-          phone_number_id: {
-            type: 'string',
-            description: 'Your Commune phone number ID',
-          },
-        },
-        required: ['to', 'body', 'phone_number_id'],
-      },
-    },
-    {
-      name: 'commune_list_sms_conversations',
-      description: 'List SMS conversations.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          phone_number_id: {
-            type: 'string',
-            description: 'Phone number ID to list conversations for',
-          },
-        },
-        required: ['phone_number_id'],
-      },
-    },
-    {
-      name: 'commune_get_sms_thread',
-      description: 'Get all SMS messages with a specific phone number.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          remote_number: {
-            type: 'string',
-            description: 'The other party phone number (E.164)',
-          },
-          phone_number_id: {
-            type: 'string',
-            description: 'Your Commune phone number ID',
-          },
-        },
-        required: ['remote_number', 'phone_number_id'],
-      },
-    },
-    {
-      name: 'commune_search_sms',
-      description: 'Semantic search across SMS messages.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          query: {
-            type: 'string',
-            description: 'Natural language search query',
-          },
-          phone_number_id: { type: 'string' },
-          limit: { type: 'number' },
-        },
-        required: ['query'],
       },
     },
   ],
@@ -398,119 +324,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               type: 'text',
               text: `Tags added: ${(args!.tags as string[]).join(', ')}`,
-            },
-          ],
-        };
-      }
-
-      // ── SMS ────────────────────────────────────────────────────────────
-
-      case 'commune_list_phone_numbers': {
-        const numbers = await commune.phoneNumbers.list();
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(
-                numbers.map((n) => ({
-                  id: n.id,
-                  number: n.number,
-                  type: n.numberType,
-                  sms: n.capabilities.sms,
-                  voice: n.capabilities.voice,
-                })),
-                null,
-                2
-              ),
-            },
-          ],
-        };
-      }
-
-      case 'commune_send_sms': {
-        const result = await commune.sms.send({
-          to: args!.to as string,
-          body: args!.body as string,
-          phone_number_id: args!.phone_number_id as string,
-        });
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify({
-                status: result.status,
-                message_id: result.message_id,
-              }),
-            },
-          ],
-        };
-      }
-
-      case 'commune_list_sms_conversations': {
-        const convos = await commune.sms.conversations({
-          phone_number_id: args!.phone_number_id as string,
-        });
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(
-                convos.map((c) => ({
-                  thread_id: c.thread_id,
-                  remote_number: c.remote_number,
-                  message_count: c.message_count,
-                  last_message: c.last_message_preview,
-                })),
-                null,
-                2
-              ),
-            },
-          ],
-        };
-      }
-
-      case 'commune_get_sms_thread': {
-        const messages = await commune.sms.thread(
-          args!.remote_number as string,
-          args!.phone_number_id as string
-        );
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(
-                messages.map((m) => ({
-                  direction: m.direction,
-                  content: m.content,
-                  created_at: m.created_at,
-                })),
-                null,
-                2
-              ),
-            },
-          ],
-        };
-      }
-
-      case 'commune_search_sms': {
-        const results = await commune.sms.search({
-          q: args!.query as string,
-          phone_number_id: args!.phone_number_id as string | undefined,
-          limit: (args!.limit as number) || 5,
-        });
-        return {
-          content: [
-            {
-              type: 'text',
-              text: JSON.stringify(
-                results.map((m) => ({
-                  message_id: m.message_id,
-                  content: m.content,
-                  direction: m.direction,
-                })),
-                null,
-                2
-              ),
             },
           ],
         };

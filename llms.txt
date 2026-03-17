@@ -1,6 +1,6 @@
 # email-for-agents
 
-> Production-ready code examples for giving AI agents a real email address and phone number. Covers LangChain, CrewAI, OpenAI Agents SDK, Claude, MCP Server, TypeScript, SMS, OpenClaw, and agent-to-agent communication. Powered by Commune — email + SMS infrastructure built natively for AI agents.
+> Production-ready code examples for giving AI agents a real email address. Covers LangChain, CrewAI, OpenAI Agents SDK, Claude, MCP Server, TypeScript, OpenClaw, and agent-to-agent communication. Powered by Commune — email infrastructure built natively for AI agents.
 
 All examples are runnable with a Commune API key. Copy, paste, run.
 
@@ -28,30 +28,28 @@ Key primitives:
 
 ## OpenClaw
 
-OpenClaw is an open-source personal agent framework. Commune provides first-party skills. Install: `bash install.sh` from the openclaw-email-sms directory. Skills: `commune-email` (inbox, threads, send, reply, search) and `commune-sms` (send, receive, phone numbers).
+OpenClaw is an open-source personal agent framework. Commune provides a first-party email skill. Install: `bash install.sh` from the dedicated quickstart repo. Skill: `commune-email` (inbox, threads, send, reply, search).
 
-- [OpenClaw skills and setup](openclaw-email-sms/README.md)
-- [Dedicated OpenClaw quickstart repo](https://github.com/shanjai-raj/commune-openclaw-email-sms-quickstart)
+- [Dedicated OpenClaw quickstart repo](https://github.com/commune-dev/commune-openclaw-email-quickstart)
 
 ## Platforms
 
-- [LangChain examples](langchain/): Customer support agent, lead outreach, email+SMS tools
+- [LangChain examples](langchain/): Customer support agent, lead outreach
 - [CrewAI examples](crewai/): Support crew, outreach crew with multi-agent coordination
 - [OpenAI Agents SDK examples](openai-agents/): Support agent, multi-agent handoff
 - [Claude (Anthropic) examples](claude/): Support agent, extraction agent
-- [MCP Server](mcp-server/): 13-tool MCP server for Claude Desktop and Cursor
+- [MCP Server](mcp-server/): MCP server for Claude Desktop and Cursor
 - [TypeScript examples](typescript/): Webhook handler, multi-agent coordination
-- [SMS examples](sms/): Alert agent, two-way SMS conversation handler
-- [OpenClaw integration](openclaw-email-sms/): Email & SMS skills for OpenClaw agents
+- [OpenClaw integration](https://github.com/commune-dev/commune-openclaw-email-quickstart): Email skill for OpenClaw agents
 - [Agent-to-agent](agent-to-agent/): Typed task delegation, orchestrator/worker pattern, agent mesh
 
 ## Use Cases
 
-- [Customer support](use-cases/customer-support/): Email agent, SMS bot, omnichannel
-- [Hiring & recruiting](use-cases/hiring-and-recruiting/): SMS worker dispatch, candidate outreach, interview scheduler
-- [Sales & marketing](use-cases/sales-and-marketing/): Cold email sequences, SMS lead qualification, newsletter
+- [Customer support](use-cases/customer-support/): Email agent, omnichannel
+- [Hiring & recruiting](use-cases/hiring-and-recruiting/): Candidate outreach, interview scheduler
+- [Sales & marketing](use-cases/sales-and-marketing/): Cold email sequences, newsletter
 - [Research](use-cases/research/): Email research agent
-- [Notifications & alerts](use-cases/notifications-and-alerts/): Incident alerts, transactional SMS
+- [Notifications & alerts](use-cases/notifications-and-alerts/): Incident alerts
 
 ## Capabilities
 
@@ -60,8 +58,6 @@ OpenClaw is an open-source personal agent framework. Commune provides first-part
 - [Extraction](capabilities/extraction/): Extract structured data from email content
 - [Search](capabilities/search/): Semantic vector search across email history
 - [Webhooks](capabilities/webhooks/): Receive and verify inbound email webhooks
-- [Phone numbers](capabilities/phone-numbers/): Provision and manage phone numbers
-- [SMS](capabilities/sms/): Send and receive SMS messages
 
 ## SDK
 
@@ -75,8 +71,6 @@ Key methods (Python / TypeScript):
 - `commune.threads.messages(thread_id)` — full message chain with direction, participants, content
 - `commune.search.threads(query, inbox_id)` — semantic/vector search across all messages
 - `commune.threads.set_status(thread_id, status)` — open / needs_reply / waiting / closed
-- `commune.sms.send(to, body, phone_number_id)` — send SMS from agent's phone number
-- `commune.phone_numbers.list()` / `commune.phone_numbers.provision()` — manage agent phone numbers
 - `verifyCommuneWebhook(rawBody, timestamp, signature, secret)` — verify inbound webhook (TypeScript)
 
 ## API Reference

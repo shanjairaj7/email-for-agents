@@ -8,8 +8,7 @@ Two ready-to-run examples for building AI-powered notification systems with [Com
 
 | Example | Channels | Stack | Description |
 |---------|----------|-------|-------------|
-| [incident-alerts/](./incident-alerts/) | Email + SMS | Python + TypeScript | AI-assessed incident alerts to on-call engineers with 10-minute escalation and acknowledgment via email reply |
-| [order-and-transactional-sms/](./order-and-transactional-sms/) | SMS | Python | Pattern library for AI-personalized transactional SMS — confirmations, shipping updates, delays |
+| [incident-alerts/](./incident-alerts/) | Email | Python + TypeScript | AI-assessed incident alerts to on-call engineers with 10-minute escalation and acknowledgment via email reply |
 
 ---
 
@@ -18,26 +17,15 @@ Two ready-to-run examples for building AI-powered notification systems with [Com
 ```
 Are you alerting engineers about system incidents?
 └── Yes → incident-alerts/
-    Sends SMS for immediate attention + email with full context.
+    Sends email with full context and stack traces.
     Escalates to secondary on-call if no response in 10min.
-
-Are you notifying customers about order status?
-└── Yes → order-and-transactional-sms/
-    Drop-in functions for confirmation, shipping, delivery, and delay SMS.
-    Works with any order management system.
 ```
 
 ---
 
-## Why email + SMS together?
+## Why email for alerts?
 
-Different situations call for different channels:
-
-**SMS** is an interrupt. People see it instantly, even away from a computer. Ideal for urgent alerts and time-sensitive order updates.
-
-**Email** carries context. Stack traces, runbook links, full order details, reply threads — SMS can't hold all of that. Email is where the engineer (or customer) reads the full picture.
-
-Commune gives you both channels from a single API, so your agent can use whichever is right for the moment — or both at once.
+Email carries context. Stack traces, runbook links, full details, reply threads — all of that lives in the thread. When an engineer (or customer) needs to take action, they read the full picture in their inbox and reply directly in thread.
 
 ---
 

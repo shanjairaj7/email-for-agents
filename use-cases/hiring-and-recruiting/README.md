@@ -6,7 +6,6 @@ Three ready-to-run examples for building AI-powered hiring and recruiting workfl
 
 | Example | Channel | Stack | Description |
 |---------|---------|-------|-------------|
-| [sms-worker-dispatch/](./sms-worker-dispatch/) | SMS | Python + Flask + OpenAI | AI staffing agent dispatches jobs to a worker pool via SMS, collects YES/NO replies via webhook, tracks status, and emails manager summaries |
 | [candidate-email-outreach/](./candidate-email-outreach/) | Email | Python + OpenAI | AI recruiter reads a candidate list, sends personalized outreach emails, monitors for replies, and continues the conversation in-thread |
 | [interview-scheduler/](./interview-scheduler/) | Email | Python + OpenAI | Agent monitors an inbox for interview requests, proposes available time slots, and sends confirmation emails — all within a single email thread |
 
@@ -15,10 +14,6 @@ Three ready-to-run examples for building AI-powered hiring and recruiting workfl
 ## Which should I use?
 
 ```
-Are you coordinating shift workers, gig workers, or field staff?
-└── Yes → sms-worker-dispatch/
-    SMS reaches workers instantly, no app required. Webhook captures replies.
-
 Are you doing candidate sourcing or outreach at scale?
 └── Yes → candidate-email-outreach/
     Reads a CSV, personalizes every email with LLM, tracks replies per thread.
@@ -27,8 +22,6 @@ Do you need to automate the back-and-forth of interview scheduling?
 └── Yes → interview-scheduler/
     Monitors inbox, proposes time slots, confirms bookings in the same thread.
 ```
-
-**sms-worker-dispatch** — The most complete example. An end-to-end staffing platform in ~200 lines: mass SMS dispatch, inbound webhook processing, OpenAI classification, auto-reply, manager email notifications, and a `/summary` endpoint. Start here if you work with hourly, gig, or shift workers.
 
 **candidate-email-outreach** — Best for teams doing sourcing at volume. A polling agent that reads a CSV, writes a personalized email per candidate with OpenAI, tracks every reply by `thread_id`, and continues the conversation automatically. No separate database needed — Commune's threading keeps everything organized.
 
@@ -42,4 +35,3 @@ All examples require:
 
 - A [Commune](https://commune.sh) account and API key (`comm_...`)
 - An [OpenAI](https://platform.openai.com) API key (`sk-...`)
-- `sms-worker-dispatch` also requires a Commune phone number (provision in the dashboard)

@@ -1,4 +1,4 @@
-# Quickstart — Give Your Agent an Email Address & Phone Number
+# Quickstart — Give Your Agent an Email Address
 
 ```python
 # Install
@@ -58,49 +58,19 @@ console.log(result.thread_id);
 
 ---
 
-## Give your agent a phone number
-
-```python
-# List your provisioned numbers
-numbers = commune.phone_numbers.list()
-print(numbers[0].number)  # → +14155551234
-
-# Send an SMS
-commune.sms.send(
-    to="+14155550000",
-    body="Hello from your agent!",
-    phone_number_id=numbers[0].id,
-)
-```
-
-```typescript
-const numbers = await commune.phoneNumbers.list();
-await commune.sms.send({
-  to: '+14155550000',
-  body: 'Hello from your agent!',
-  phone_number_id: numbers[0].id,
-});
-```
-
-Provision a new number at [commune.email/dashboard](https://commune.email/dashboard).
-
----
-
 ## Files in this directory
 
 | File | What it does |
 |------|-------------|
 | `give-your-agent-email.py` | Create inbox, print address, send test email |
-| `give-your-agent-phone-number.py` | List phone numbers, send test SMS |
 | `send-your-first-email.py` | Minimal example: create inbox → send email |
-| `send-your-first-sms.py` | Minimal example: list phones → send SMS |
-| `setup.py` | Full onboarding: inbox + test email + phone + test SMS |
+| `setup.py` | Onboarding: inbox + test email |
 
 ---
 
 ## Next steps
 
-Once you have an inbox and phone number, you're ready for the real use cases:
+Once you have an inbox, you're ready for the real use cases:
 
 - **[use-cases/customer-support/](../../use-cases/customer-support/)** — email + SMS support agent with knowledge base and thread-aware replies
 - **[use-cases/notifications-and-alerts/](../../use-cases/notifications-and-alerts/)** — incident alerting with SMS escalation and email acknowledgment
@@ -112,9 +82,7 @@ Once you have an inbox and phone number, you're ready for the real use cases:
 flowchart LR
     A[Get API key] --> B[Create inbox]
     B --> C[Send email]
-    B --> D[Provision phone number]
-    D --> E[Send SMS]
-    C & E --> F[Build your use case]
+    C --> F[Build your use case]
     F --> G[customer-support/]
     F --> H[notifications-and-alerts/]
     F --> I[mcp-server/]
